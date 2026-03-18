@@ -31,6 +31,11 @@ class StrawberryProduct extends Model
         'is_organic' => 'boolean',
     ];
 
+    public function salesData()
+    {
+        return $this->hasMany(SalesData::class, 'strawberry_product_id');
+    }
+
     public function getFormattedPriceAttribute()
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');

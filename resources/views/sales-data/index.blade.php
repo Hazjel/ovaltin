@@ -343,7 +343,7 @@
                                 {{ \Carbon\Carbon::parse($sale->tanggal_penjualan)->format('d/m/Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ ucfirst($sale->nama_produk) }}
+                                {{ $sale->product->name ?? $sale->nama_produk }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ number_format($sale->jumlah_terjual, 0) }}
@@ -407,12 +407,13 @@
                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 </div>
                 <div>
-                    <label for="edit_nama_produk" class="block text-sm font-medium text-gray-700">Nama Produk</label>
-                    <select name="nama_produk" id="edit_nama_produk" required
+                    <label for="edit_strawberry_product_id" class="block text-sm font-medium text-gray-700">Nama Produk</label>
+                    <select name="strawberry_product_id" id="edit_strawberry_product_id" required
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                         <option value="">Pilih Produk</option>
                         @foreach($products as $product)
                             <option value="{{ $product }}">{{ $product }}</option>
+                            <option value="{{ $product->id }}">{{ $product->name }}</option>
                         @endforeach
                     </select>
         </div>
@@ -446,7 +447,7 @@
             .then(data => {
                 document.getElementById('editForm').action = '{{ url("sales-data") }}/' + id;
                 document.getElementById('edit_tanggal_penjualan').value = data.tanggal_penjualan;
-                document.getElementById('edit_nama_produk').value = data.nama_produk;
+                document.getElementById('edit_strawberry_product_id').value = data.strawberry_product_id;
                 document.getElementById('edit_jumlah_terjual').value = data.jumlah_terjual;
                 document.getElementById('editModal').classList.remove('hidden');
             })
@@ -480,9 +481,9 @@
             datasets: [
                 @foreach($products as $index => $product)
                 {
-                    label: '{{ $product }}',
+                    label: '{{ $product->name }}',
                     data: @json($monthlyData['data']->map(function($day) use ($product) {
-                        return isset($day['data'][$product]) ? $day['data'][$product] : 0;
+                        return isset($day['data'][$product->name]) ? $day['data'][$product->name] : 0;
                     })->values()),
                     backgroundColor: [
                         'rgba(239, 68, 68, 0.8)',
@@ -508,9 +509,9 @@
             datasets: [
                 @foreach($products as $index => $product)
                 {
-                    label: '{{ $product }}',
+                    label: '{{ $product->name }}',
                     data: @json($monthlyData['data']->map(function($month) use ($product) {
-                        return isset($month['data'][$product]) ? $month['data'][$product] : 0;
+                        return isset($month['data'][$product->name]) ? $month['data'][$product->name] : 0;
                     })->values()),
                     backgroundColor: [
                         'rgba(239, 68, 68, 0.8)',

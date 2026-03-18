@@ -18,7 +18,9 @@ class SalesDataController extends Controller
     public function index(Request $request)
     {
         // Ambil data penjualan untuk tabel
-        $salesHistory = SalesData::orderBy('tanggal_penjualan', 'desc')->paginate(20);
+        $salesHistory = SalesData::with('product')
+            ->orderBy('tanggal_penjualan', 'desc')
+            ->paginate(20);
 
         $products = SalesData::getAvailableProducts(); // object id+name
 
@@ -46,22 +48,9 @@ class SalesDataController extends Controller
 
     private function getAvailableProductNames(): array
     {
-        return collect(SalesData::getAvailableProducts())
-            ->map(function ($product) {
-                if (is_string($product)) {
-                    return trim($product);
-                }
-
-                if (is_array($product)) {
-                    return trim((string) ($product['name'] ?? $product['nama_produk'] ?? ''));
-                }
-
-                if (is_object($product)) {
-                    return trim((string) ($product->name ?? $product->nama_produk ?? ''));
-                }
-
-                return '';
-            })
+        return SalesData::getAvailableProducts()
+            ->pluck('name')
+            ->map(fn ($name) => trim((string) $name))
             ->filter()
             ->unique(fn ($name) => strtolower($name))
             ->values()
@@ -416,6 +405,9 @@ class SalesDataController extends Controller
             'nama_produk' => $product->name, // snapshot
             'jumlah_terjual' => $request->jumlah_terjual,
         ]);
+
+        return redirect()->route('sales-data.index')
+            ->with('success', 'Data penjualan berhasil ditambahkan.');
     }
 
     public function uploadExcel(Request $request)
@@ -524,13 +516,21 @@ class SalesDataController extends Controller
 
                         if ($jumlah > 0) {
                             // Cek apakah data sudah ada (untuk menghindari duplikasi)
+                            $product = StrawberryProduct::whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($productName))])
+                                ->first();
+
+                            if (!$product) {
+                                continue;
+                            }
+
                             $exists = SalesData::where('tanggal_penjualan', $tanggal)
-                                ->where('nama_produk', $productName)
+                                ->where('strawberry_product_id', $product->id)
                                 ->exists();
 
                             if (!$exists) {
                                 SalesData::create([
                                     'tanggal_penjualan' => $tanggal,
+                                    'strawberry_product_id' => $product->id,
                                     'nama_produk' => $productName,
                                     'jumlah_terjual' => $jumlah,
                                 ]);
@@ -581,8 +581,8 @@ class SalesDataController extends Controller
 
         // Cek apakah nama sudah sesuai dengan produk yang tersedia
         foreach ($availableProducts as $product) {
-            if (strtolower($product) === $name) {
-                return $product;
+            if (strtolower(trim($product->name)) === $name) {
+                return $product->name;
             }
         }
 
@@ -705,6 +705,7 @@ class SalesDataController extends Controller
             'jumlah_terjual' => 'required|integer|min:0',
         ]);
 
+        $salesData = SalesData::findOrFail($id);
         $product = StrawberryProduct::findOrFail($request->strawberry_product_id);
 
         $salesData->update([
@@ -713,6 +714,9 @@ class SalesDataController extends Controller
             'nama_produk' => $product->name,
             'jumlah_terjual' => $request->jumlah_terjual,
         ]);
+
+        return redirect()->route('sales-data.index')
+            ->with('success', 'Data penjualan berhasil diperbarui.');
     }
 
     public function destroy($id)

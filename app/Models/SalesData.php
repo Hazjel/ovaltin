@@ -17,9 +17,38 @@ class SalesData extends Model
         'jumlah_terjual' => 'integer',
     ];
 
-    // Daftar produk yang tersedia
-    public static function getAvailableProducts()
+    // Daftar produk yang tersedia untuk input data penjualan
+    public static function getAvailableProducts(): array
     {
-        return ['Agar', 'Dodol', 'Krupuk', 'Selai'];
+        $defaultProducts = ['Agar', 'Dodol', 'Krupuk', 'Selai'];
+
+        $strawberryProducts = StrawberryProduct::query()
+            ->whereNotNull('name')
+            ->where('name', '!=', '')
+            ->pluck('name')
+            ->map(fn ($name) => trim($name))
+            ->filter()
+            ->values()
+            ->all();
+
+        $historicalProducts = self::query()
+            ->whereNotNull('nama_produk')
+            ->where('nama_produk', '!=', '')
+            ->distinct()
+            ->pluck('nama_produk')
+            ->map(fn ($name) => trim($name))
+            ->filter()
+            ->values()
+            ->all();
+
+        $products = array_values(array_unique(array_merge(
+            $strawberryProducts,
+            $historicalProducts,
+            $defaultProducts,
+        )));
+
+        sort($products, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $products;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SalesData;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -15,6 +16,16 @@ use App\Models\StrawberryProduct;
 
 class SalesDataController extends Controller
 {
+    private function hasProductForeignKeyColumn(): bool
+    {
+        static $hasColumn;
+
+        if ($hasColumn === null) {
+            $hasColumn = Schema::hasColumn('sales_data', 'strawberry_product_id');
+        }
+
+        return $hasColumn;
+    }
     public function index(Request $request)
     {
         // Ambil data penjualan untuk tabel
@@ -391,20 +402,28 @@ class SalesDataController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'tanggal_penjualan' => 'required|date',
             'strawberry_product_id' => 'required|exists:strawberry_products,id',
             'jumlah_terjual' => 'required|integer|min:0',
-        ]);
+        ];
+
+        $request->validate($rules);
 
         $product = StrawberryProduct::findOrFail($request->strawberry_product_id);
 
-        SalesData::create([
+        $payload = [
             'tanggal_penjualan' => $request->tanggal_penjualan,
             'strawberry_product_id' => $product->id,
             'nama_produk' => $product->name, // snapshot
             'jumlah_terjual' => $request->jumlah_terjual,
-        ]);
+        ];
+
+        if ($this->hasProductForeignKeyColumn()) {
+            $payload['strawberry_product_id'] = $product->id;
+        }
+
+        SalesData::create($payload);
 
         return redirect()->route('sales-data.index')
             ->with('success', 'Data penjualan berhasil ditambahkan.');

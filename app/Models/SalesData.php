@@ -20,8 +20,6 @@ class SalesData extends Model
     // Daftar produk yang tersedia untuk input data penjualan
     public static function getAvailableProducts(): array
     {
-        $defaultProducts = ['Agar', 'Dodol', 'Krupuk', 'Selai'];
-
         $strawberryProducts = StrawberryProduct::query()
             ->whereNotNull('name')
             ->where('name', '!=', '')
@@ -44,7 +42,6 @@ class SalesData extends Model
         $products = array_values(array_unique(array_merge(
             $strawberryProducts,
             $historicalProducts,
-            $defaultProducts,
         )));
 
         sort($products, SORT_NATURAL | SORT_FLAG_CASE);

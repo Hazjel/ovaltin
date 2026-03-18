@@ -8,6 +8,7 @@ class SalesData extends Model
 {
     protected $fillable = [
         'tanggal_penjualan',
+        'strawberry_product_id',
         'nama_produk',
         'jumlah_terjual',
     ];
@@ -17,35 +18,28 @@ class SalesData extends Model
         'jumlah_terjual' => 'integer',
     ];
 
-    // Daftar produk yang tersedia untuk input data penjualan
-    public static function getAvailableProducts(): array
+    public function product()
     {
-        $strawberryProducts = StrawberryProduct::query()
+        return $this->belongsTo(StrawberryProduct::class, 'strawberry_product_id');
+    }
+
+    public static function getAvailableProducts()
+    {
+        return StrawberryProduct::query()
             ->whereNotNull('name')
             ->where('name', '!=', '')
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
+
+    public static function getAvailableProductNames(): array
+    {
+        return self::getAvailableProducts()
             ->pluck('name')
-            ->map(fn ($name) => trim($name))
+            ->map(fn ($name) => trim((string) $name))
             ->filter()
+            ->unique(fn ($name) => strtolower($name))
             ->values()
             ->all();
-
-        $historicalProducts = self::query()
-            ->whereNotNull('nama_produk')
-            ->where('nama_produk', '!=', '')
-            ->distinct()
-            ->pluck('nama_produk')
-            ->map(fn ($name) => trim($name))
-            ->filter()
-            ->values()
-            ->all();
-
-        $products = array_values(array_unique(array_merge(
-            $strawberryProducts,
-            $historicalProducts,
-        )));
-
-        sort($products, SORT_NATURAL | SORT_FLAG_CASE);
-
-        return $products;
     }
 }

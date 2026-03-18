@@ -21,7 +21,7 @@
                 </svg>
                 Lihat Forecast
             </a>
-            <button onclick="document.getElementById('excel-upload').click()" 
+            <button onclick="document.getElementById('excel-upload').click()"
                     class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
                 <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
@@ -144,11 +144,11 @@
                     </div>
                     <div>
                         <label for="nama_produk" class="block text-sm font-medium text-gray-700">Nama Produk</label>
-                        <select name="nama_produk" id="nama_produk" required
+                        <select name="strawberry_product_id" id="strawberry_product_id" required
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="">Pilih Produk</option>
                             @foreach($products as $product)
-                                <option value="{{ $product }}">{{ $product }}</option>
+                                <option value="{{ $product->id }}">{{ $product->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -159,7 +159,7 @@
                                placeholder="0">
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" 
+                        <button type="submit"
                                 class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -185,14 +185,14 @@
                 </h3>
                 <form action="{{ route('sales-data.index') }}" method="GET" class="flex items-center space-x-2" id="filter-form">
                     <label for="year" class="text-sm text-gray-700">Tahun:</label>
-                    <select id="year" name="year" 
+                    <select id="year" name="year"
                             class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                         @for($y = now()->year; $y >= now()->year - 5; $y--)
                             <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
                     </select>
                     <label for="month" class="text-sm text-gray-700 ml-2">Bulan:</label>
-                    <select id="month" name="month" 
+                    <select id="month" name="month"
                             class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Semua Bulan</option>
                         @for($m = 1; $m <= 12; $m++)
@@ -274,7 +274,7 @@
                         </div>
                     </div>
                 </div>
-                
+
     <!-- Generate Laporan Performa Penjualan -->
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
@@ -283,18 +283,18 @@
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div>
                         <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
-                        <input type="date" id="start_date" name="start_date" 
+                        <input type="date" id="start_date" name="start_date"
                                value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}"
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     </div>
                     <div>
                         <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal Akhir</label>
-                        <input type="date" id="end_date" name="end_date" 
+                        <input type="date" id="end_date" name="end_date"
                                value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     </div>
                     <div class="flex items-end">
-                        <button type="button" onclick="generateReport()" 
+                        <button type="button" onclick="generateReport()"
                                 class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -308,7 +308,7 @@
                 <div class="bg-gray-50 rounded-lg p-4">
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-md font-semibold text-gray-900">Hasil Laporan</h4>
-                        <button type="button" onclick="downloadReport()" 
+                        <button type="button" onclick="downloadReport()"
                                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -350,8 +350,8 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-2">
-                                    <button onclick="editSalesData({{ $sale->id }})" 
-                                            class="text-blue-600 hover:text-blue-900" 
+                                    <button onclick="editSalesData({{ $sale->id }})"
+                                            class="text-blue-600 hover:text-blue-900"
                                             title="Edit">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -423,11 +423,11 @@
                            placeholder="0">
     </div>
                 <div class="flex items-center justify-end space-x-3 pt-4">
-                    <button type="button" onclick="closeEditModal()" 
+                    <button type="button" onclick="closeEditModal()"
                             class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                         Batal
                     </button>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
                         Simpan Perubahan
             </button>
@@ -472,7 +472,7 @@
 <script>
     // Monthly/Daily Chart
     const monthlyCtx = document.getElementById('monthlyChart');
-    
+
     @if($monthlyData['type'] == 'daily')
         // Daily chart (per hari dalam bulan)
         const chartData = {
@@ -530,7 +530,7 @@
             ]
         };
     @endif
-    
+
     const monthlyChart = new Chart(monthlyCtx, {
         type: 'bar',
         data: chartData,
@@ -569,22 +569,22 @@
     function generateReport() {
         const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;
-        
+
         if (!startDate || !endDate) {
             alert('Mohon pilih tanggal mulai dan tanggal akhir');
             return;
         }
-        
+
         // Store dates for download
         reportStartDate = startDate;
         reportEndDate = endDate;
-        
+
         fetch('{{ route("sales-data.generate-report") }}?start_date=' + startDate + '&end_date=' + endDate)
             .then(response => response.json())
             .then(data => {
                 const resultDiv = document.getElementById('report-result');
                 const contentDiv = document.getElementById('report-content');
-                
+
                 let html = `
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div class="bg-white p-4 rounded-lg">
@@ -616,7 +616,7 @@
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                 `;
-                
+
                 for (const [product, stats] of Object.entries(data.products)) {
                     html += `
                         <tr>
@@ -629,14 +629,14 @@
                         </tr>
                     `;
                 }
-                
+
                 html += `
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 `;
-                
+
                 contentDiv.innerHTML = html;
                 resultDiv.classList.remove('hidden');
             })
@@ -650,15 +650,15 @@
     function downloadReport() {
         const startDate = reportStartDate || document.getElementById('start_date').value;
         const endDate = reportEndDate || document.getElementById('end_date').value;
-        
+
         if (!startDate || !endDate) {
             alert('Mohon generate laporan terlebih dahulu atau pilih tanggal mulai dan tanggal akhir');
             return;
         }
-        
+
         // Create download URL
         const downloadUrl = '{{ route("sales-data.download-report") }}?start_date=' + startDate + '&end_date=' + endDate;
-        
+
         // Create temporary link and trigger download
         const link = document.createElement('a');
         link.href = downloadUrl;

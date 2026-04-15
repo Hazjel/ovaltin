@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@php
-    use Illuminate\Support\Facades\Storage;
-@endphp
-
 @section('title', 'Dashboard')
 
 @section('content')
@@ -425,7 +421,7 @@ html {
                                     <div class="bg-gradient-to-br from-pink-50 to-pink-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 border-pink-100 h-full">
                                         @if($product->image)
                                             <div class="h-48 overflow-hidden bg-pink-100 relative">
-                                                <img src="{{ Storage::url($product->image) }}" 
+                                                <img src="{{ $product->image_url }}" 
                                                      alt="{{ $product->name }}" 
                                                      class="w-full h-full object-cover"
                                                      style="display: block !important; visibility: visible !important; opacity: 1 !important; min-height: 192px; max-width: 100%;"

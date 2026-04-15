@@ -22,6 +22,21 @@ class ProductIntroduction extends Model
         'is_active' => 'boolean',
     ];
 
+    protected static function booted(): void
+    {
+        // Pastikan hanya satu intro yang aktif di satu waktu
+        static::saving(function (self $model) {
+            if (!$model->is_active) {
+                return;
+            }
+
+            static::query()
+                ->when($model->exists, fn ($q) => $q->where('id', '!=', $model->id))
+                ->where('is_active', true)
+                ->update(['is_active' => false]);
+        });
+    }
+
     /**
      * Get the active product introduction
      */

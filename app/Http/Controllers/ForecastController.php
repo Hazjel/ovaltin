@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SalesData;
+use App\Models\StrawberryProduct;
 use App\Services\ForecastService;
 
 class ForecastController extends Controller
@@ -12,85 +13,76 @@ class ForecastController extends Controller
     {
         $forecastDays = $request->get('forecast_days', 30);
         $selectedProduct = $request->get('product', 'Agar');
-        $modelType = 'linear'; // Hanya menggunakan regresi linear
-        
-        // Hitung summary untuk setiap produk
-        $products = SalesData::getAvailableProducts();
+        $modelType = 'linear';
+
+        $products = StrawberryProduct::orderBy('name')->get();
         $summary = [];
         $chartData = [];
         $forecastResults = [];
         $forecastService = app(ForecastService::class);
-        
+
         foreach ($products as $product) {
-            // Ambil data historis
-            $productSales = SalesData::where('nama_produk', $product)
+            $productSales = SalesData::where('strawberry_product_id', $product->id)
                 ->orderBy('tanggal_penjualan', 'asc')
                 ->get();
-            
-            if ($productSales->count() >= 3) {
-                // Lakukan forecasting dengan regresi linear
-                $forecastResult = $forecastService->forecast($product, $productSales, $forecastDays, $modelType);
-                
-                if ($forecastResult) {
-                    // Summary
-                    $totalForecast = array_sum($forecastResult['forecast']['values']);
-                    $avgForecast = $totalForecast / $forecastDays;
-                    
-                    $summary[$product] = [
-                        'avg_forecast' => $avgForecast,
-                        'total_forecast' => $totalForecast,
-                    ];
-                    
-                    // Chart data
-                    $predictedValues = $forecastResult['linear_regression']['values'] ?? $forecastResult['historical']['values'];
-                    
-                    // Hitung regresi linear yang dilanjutkan untuk periode forecast
-                    $linearRegressionExtended = [];
-                    if (isset($forecastResult['forecast']['values'])) {
-                        $linearRegressionExtended = $forecastResult['forecast']['values'];
-                    }
-                    
-                    $chartData[$product] = [
-                        'historical' => [
-                            'labels' => $forecastResult['historical']['dates'],
-                            'actual' => $forecastResult['historical']['values'],
-                            'predicted' => $predictedValues,
-                        ],
-                        'forecast' => [
-                            'labels' => $forecastResult['forecast']['dates'],
-                            'values' => $forecastResult['forecast']['values'],
-                        ],
-                        'linear_regression_extended' => $linearRegressionExtended,
-                        'metrics' => [
-                            'r2' => $forecastResult['metrics']['R2 Score'],
-                            'rmse' => $forecastResult['metrics']['RMSE'],
-                            'mae' => $forecastResult['metrics']['MAE'],
-                        ],
-                        'model_type' => 'linear',
-                    ];
-                    
-                    // Forecast results untuk tabel
-                    $forecastResults[$product] = [
-                        'success' => true,
-                        'forecast' => array_map(function($date, $value) {
-                            return [
-                                'date' => $date,
-                                'quantity' => $value,
-                            ];
-                        }, $forecastResult['forecast']['dates'], $forecastResult['forecast']['values']),
-                    ];
-                } else {
-                    $forecastResults[$product] = ['success' => false];
-                }
-            } else {
-                $forecastResults[$product] = ['success' => false];
+
+            if ($productSales->count() < 3) {
+                $forecastResults[$product->name] = ['success' => false];
+                continue;
             }
+
+            $forecastResult = $forecastService->forecast($product->name, $productSales, $forecastDays, $modelType);
+
+            if (!$forecastResult) {
+                $forecastResults[$product->name] = ['success' => false];
+                continue;
+            }
+
+            $totalForecast = array_sum($forecastResult['forecast']['values']);
+            $avgForecast = $totalForecast / $forecastDays;
+
+            $summary[$product->name] = [
+                'avg_forecast' => $avgForecast,
+                'total_forecast' => $totalForecast,
+            ];
+
+            $predictedValues = $forecastResult['linear_regression']['values'] ?? $forecastResult['historical']['values'];
+            $linearRegressionExtended = $forecastResult['forecast']['values'] ?? [];
+
+            $chartData[$product->name] = [
+                'historical' => [
+                    'labels' => $forecastResult['historical']['dates'],
+                    'actual' => $forecastResult['historical']['values'],
+                    'predicted' => $predictedValues,
+                ],
+                'forecast' => [
+                    'labels' => $forecastResult['forecast']['dates'],
+                    'values' => $forecastResult['forecast']['values'],
+                ],
+                'linear_regression_extended' => $linearRegressionExtended,
+                'metrics' => [
+                    'r2' => $forecastResult['metrics']['R2 Score'],
+                    'rmse' => $forecastResult['metrics']['RMSE'],
+                    'mae' => $forecastResult['metrics']['MAE'],
+                ],
+                'model_type' => 'linear',
+            ];
+
+            $forecastResults[$product->name] = [
+                'success' => true,
+                'forecast' => array_map(function ($date, $value) {
+                    return [
+                        'date' => $date,
+                        'quantity' => $value,
+                    ];
+                }, $forecastResult['forecast']['dates'], $forecastResult['forecast']['values']),
+            ];
         }
-        
+
         return view('forecast.index', compact(
-            'summary', 
-            'forecastDays', 
-            'selectedProduct', 
+            'summary',
+            'forecastDays',
+            'selectedProduct',
             'products',
             'chartData',
             'forecastResults',
@@ -100,12 +92,22 @@ class ForecastController extends Controller
 
     public function getPrediction(Request $request)
     {
-        $product = $request->get('product', 'Agar');
+        $productParam = $request->get('product', 'Agar');
         $forecastDays = $request->get('forecast_days', 30);
-        $modelType = 'linear'; // Hanya menggunakan regresi linear
+        $modelType = 'linear';
 
-        // Ambil data historis dari database
-        $salesData = SalesData::where('nama_produk', $product)
+        // Accept product id or name for backward-compat
+        $product = is_numeric($productParam)
+            ? StrawberryProduct::find($productParam)
+            : StrawberryProduct::where('name', $productParam)->first();
+
+        if (!$product) {
+            return response()->json([
+                'error' => 'Produk tidak ditemukan.',
+            ], 404);
+        }
+
+        $salesData = SalesData::where('strawberry_product_id', $product->id)
             ->orderBy('tanggal_penjualan', 'asc')
             ->get();
 
@@ -115,10 +117,9 @@ class ForecastController extends Controller
             ], 400);
         }
 
-        // Panggil service untuk melakukan forecasting
         try {
             $forecastService = app(ForecastService::class);
-            $result = $forecastService->forecast($product, $salesData, $forecastDays, $modelType);
+            $result = $forecastService->forecast($product->name, $salesData, $forecastDays, $modelType);
 
             if (!$result) {
                 return response()->json([

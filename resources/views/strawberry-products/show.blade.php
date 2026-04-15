@@ -38,7 +38,7 @@
                     <!-- Product Image -->
                     <div>
                         @if($strawberryProduct->image)
-                            <img class="w-full h-64 object-cover rounded-lg" src="{{ Storage::url($strawberryProduct->image) }}" alt="{{ $strawberryProduct->name }}">
+                            <img class="w-full h-64 object-cover rounded-lg" src="{{ $strawberryProduct->image_url }}" alt="{{ $strawberryProduct->name }}">
                         @else
                             <div class="w-full h-64 bg-pink-100 rounded-lg flex items-center justify-center">
                                 <svg class="w-24 h-24 text-pink-400" fill="currentColor" viewBox="0 0 20 20">

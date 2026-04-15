@@ -174,7 +174,7 @@
                         @if($strawberryProduct->image)
                             <div class="mt-2 mb-4">
                                 <p class="text-sm text-gray-600 mb-2">Gambar saat ini:</p>
-                                <img src="{{ asset('storage/' . $strawberryProduct->image) }}" alt="Current Image" class="h-32 w-32 object-cover rounded-lg shadow-md">
+                                <img src="{{ $strawberryProduct->image_url }}" alt="Current Image" class="h-32 w-32 object-cover rounded-lg shadow-md">
                             </div>
                         @endif
                         

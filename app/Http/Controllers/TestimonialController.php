@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Testimonial;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class TestimonialController extends Controller
@@ -26,18 +27,18 @@ class TestimonialController extends Controller
      */
     public function create()
     {
-        // Pastikan user sudah login
-        if (!Auth::check()) {
+        $user = Auth::user();
+
+        if (!$user instanceof User) {
             return redirect()->route('login')
                 ->with('error', 'Silakan login terlebih dahulu untuk memberikan testimoni.');
         }
-        
-        // Admin tidak bisa memberikan testimoni
-        if (Auth::user()->isAdmin()) {
+
+        if ($user->isAdmin()) {
             return redirect()->route('testimonials.index')
                 ->with('error', 'Admin tidak dapat memberikan testimoni.');
         }
-        
+
         return view('testimonials.create');
     }
 
@@ -46,27 +47,29 @@ class TestimonialController extends Controller
      */
     public function store(Request $request)
     {
-        // Pastikan user sudah login
-        if (!Auth::check()) {
+        $user = Auth::user();
+
+        if (!$user instanceof User) {
             return redirect()->route('login')
                 ->with('error', 'Silakan login terlebih dahulu untuk memberikan testimoni.');
         }
-        
-        // Admin tidak bisa memberikan testimoni
-        if (Auth::user()->isAdmin()) {
+
+        if ($user->isAdmin()) {
             return redirect()->route('testimonials.index')
                 ->with('error', 'Admin tidak dapat memberikan testimoni.');
         }
-        
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
             'rating' => 'required|integer|min:1|max:5',
             'message' => 'required|string|min:10|max:1000',
         ]);
 
-        $validated['user_id'] = Auth::id();
-        $validated['is_approved'] = true; // Langsung disetujui, tidak perlu review admin
+        // Snapshot identitas dari profil user saat testimoni dibuat —
+        // tidak menerima name/email dari form supaya tidak bisa dipalsukan.
+        $validated['user_id'] = $user->id;
+        $validated['name'] = $user->name;
+        $validated['email'] = $user->email;
+        $validated['is_approved'] = true;
 
         Testimonial::create($validated);
 
@@ -80,48 +83,5 @@ class TestimonialController extends Controller
     public function show(Testimonial $testimonial)
     {
         return view('testimonials.show', compact('testimonial'));
-    }
-
-    /**
-     * Show the form for editing the specified testimonial (Admin only)
-     */
-    public function edit(Testimonial $testimonial)
-    {
-        $this->authorize('admin');
-        return view('testimonials.edit', compact('testimonial'));
-    }
-
-    /**
-     * Update the specified testimonial (Admin only)
-     */
-    public function update(Request $request, Testimonial $testimonial)
-    {
-        $this->authorize('admin');
-        
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'rating' => 'required|integer|min:1|max:5',
-            'message' => 'required|string|min:10|max:1000',
-            'is_approved' => 'boolean',
-        ]);
-
-        $testimonial->update($validated);
-
-        return redirect()->route('admin.testimonials.index')
-            ->with('success', 'Testimoni berhasil diperbarui!');
-    }
-
-    /**
-     * Remove the specified testimonial (Admin only)
-     */
-    public function destroy(Testimonial $testimonial)
-    {
-        $this->authorize('admin');
-        
-        $testimonial->delete();
-
-        return redirect()->route('admin.testimonials.index')
-            ->with('success', 'Testimoni berhasil dihapus!');
     }
 }

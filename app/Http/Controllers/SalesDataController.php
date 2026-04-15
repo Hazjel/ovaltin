@@ -57,15 +57,17 @@ class SalesDataController extends Controller
         ));
     }
 
-    private function getAvailableProductNames(): array
+    /**
+     * Resolve current product name for a sales row.
+     * FK is source of truth; falls back to legacy nama_produk for orphan rows.
+     */
+    private function resolveProductName($row, $productMap): string
     {
-        return SalesData::getAvailableProducts()
-            ->pluck('name')
-            ->map(fn ($name) => trim((string) $name))
-            ->filter()
-            ->unique(fn ($name) => strtolower($name))
-            ->values()
-            ->all();
+        if ($row->strawberry_product_id && isset($productMap[$row->strawberry_product_id])) {
+            return $productMap[$row->strawberry_product_id];
+        }
+
+        return (string) $row->nama_produk;
     }
 
     /**
@@ -73,23 +75,25 @@ class SalesDataController extends Controller
      */
     private function getMonthlySalesData($year, $selectedMonth = null)
     {
-        // Jika bulan dipilih, hanya tampilkan data untuk bulan tersebut (per hari)
+        $productMap = StrawberryProduct::pluck('name', 'id');
+
         if ($selectedMonth) {
             $startDate = Carbon::create($year, $selectedMonth, 1)->startOfMonth();
-            $endDate = Carbon::create($year, $selectedMonth, 1)->endOfMonth();
-            $daysInMonth = $endDate->daysInMonth;
+            $endDate = (clone $startDate)->endOfMonth();
 
-            $monthlyData = collect(range(1, $daysInMonth))->map(function ($day) use ($year, $selectedMonth) {
+            $rows = SalesData::whereBetween('tanggal_penjualan', [$startDate, $endDate])->get();
+
+            $monthlyData = collect(range(1, $endDate->day))->map(function ($day) use ($year, $selectedMonth, $rows, $productMap) {
                 $date = Carbon::create($year, $selectedMonth, $day);
-
-                $dailySales = SalesData::whereDate('tanggal_penjualan', $date->format('Y-m-d'))
-                    ->select('nama_produk', DB::raw('SUM(jumlah_terjual) as total'))
-                    ->groupBy('nama_produk')
-                    ->get();
-
                 $data = [];
-                foreach ($dailySales as $sale) {
-                    $data[$sale->nama_produk] = $sale->total;
+
+                foreach ($rows as $row) {
+                    if (!Carbon::parse($row->tanggal_penjualan)->isSameDay($date)) {
+                        continue;
+                    }
+
+                    $name = $this->resolveProductName($row, $productMap);
+                    $data[$name] = ($data[$name] ?? 0) + $row->jumlah_terjual;
                 }
 
                 return [
@@ -106,23 +110,24 @@ class SalesDataController extends Controller
             ];
         }
 
-        // Jika tidak ada bulan yang dipilih, tampilkan semua bulan dalam tahun
-        $months = collect(range(1, 12))->map(function ($month) use ($year) {
-            $startDate = Carbon::create($year, $month, 1)->startOfMonth();
-            $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+        $startOfYear = Carbon::create($year, 1, 1)->startOfYear();
+        $endOfYear = Carbon::create($year, 12, 31)->endOfYear();
+        $rows = SalesData::whereBetween('tanggal_penjualan', [$startOfYear, $endOfYear])->get();
 
-            $monthlySales = SalesData::whereBetween('tanggal_penjualan', [$startDate, $endDate])
-                ->select('nama_produk', DB::raw('SUM(jumlah_terjual) as total'))
-                ->groupBy('nama_produk')
-                ->get();
-
+        $months = collect(range(1, 12))->map(function ($month) use ($year, $rows, $productMap) {
             $data = [];
-            foreach ($monthlySales as $sale) {
-                $data[$sale->nama_produk] = $sale->total;
+
+            foreach ($rows as $row) {
+                if (Carbon::parse($row->tanggal_penjualan)->month !== $month) {
+                    continue;
+                }
+
+                $name = $this->resolveProductName($row, $productMap);
+                $data[$name] = ($data[$name] ?? 0) + $row->jumlah_terjual;
             }
 
             return [
-                'month' => $startDate->translatedFormat('M Y'),
+                'month' => Carbon::create($year, $month, 1)->translatedFormat('M Y'),
                 'month_num' => $month,
                 'data' => $data,
             ];
@@ -139,15 +144,27 @@ class SalesDataController extends Controller
      */
     private function getTopProducts()
     {
-        return SalesData::select('nama_produk', DB::raw('SUM(jumlah_terjual) as total_terjual'))
-            ->groupBy('nama_produk')
-            ->orderBy('total_terjual', 'desc')
+        $productMap = StrawberryProduct::pluck('name', 'id');
+
+        return SalesData::select(
+                'strawberry_product_id',
+                'nama_produk',
+                DB::raw('SUM(jumlah_terjual) as total_terjual')
+            )
+            ->groupBy('strawberry_product_id', 'nama_produk')
             ->get()
+            ->groupBy(fn ($row) => $this->resolveProductName($row, $productMap))
+            ->map(fn ($group, $name) => [
+                'nama_produk' => $name,
+                'total_terjual' => $group->sum('total_terjual'),
+            ])
+            ->sortByDesc('total_terjual')
+            ->values()
             ->map(function ($item, $index) {
                 return [
                     'rank' => $index + 1,
-                    'nama_produk' => $item->nama_produk,
-                    'total_terjual' => $item->total_terjual,
+                    'nama_produk' => $item['nama_produk'],
+                    'total_terjual' => $item['total_terjual'],
                 ];
             });
     }
@@ -161,11 +178,11 @@ class SalesDataController extends Controller
         $totalTransactions = SalesData::count();
         $avgPerTransaction = $totalTransactions > 0 ? $totalSales / $totalTransactions : 0;
 
-        $products = $this->getAvailableProductNames();
+        $products = StrawberryProduct::orderBy('name')->get();
         $productSummary = [];
 
         foreach ($products as $product) {
-            $productData = SalesData::where('nama_produk', $product)
+            $productData = SalesData::where('strawberry_product_id', $product->id)
                 ->select(
                     DB::raw('SUM(jumlah_terjual) as total'),
                     DB::raw('AVG(jumlah_terjual) as avg'),
@@ -173,7 +190,7 @@ class SalesDataController extends Controller
                 )
                 ->first();
 
-            $productSummary[$product] = [
+            $productSummary[$product->name] = [
                 'total' => $productData->total ?? 0,
                 'avg' => round($productData->avg ?? 0, 2),
                 'count' => $productData->count ?? 0,
@@ -197,18 +214,20 @@ class SalesDataController extends Controller
         $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
 
         $salesData = SalesData::whereBetween('tanggal_penjualan', [$startDate, $endDate])
+            ->with('product')
             ->get();
 
-        // Group by product
-        $productData = $salesData->groupBy('nama_produk')->map(function ($items) {
-            return [
-                'total' => $items->sum('jumlah_terjual'),
-                'count' => $items->count(),
-                'avg' => $items->avg('jumlah_terjual'),
-                'min' => $items->min('jumlah_terjual'),
-                'max' => $items->max('jumlah_terjual'),
-            ];
-        });
+        // Group by current product name (FK-based, not historical string)
+        $productData = $salesData->groupBy(fn ($item) => $item->product->name ?? $item->nama_produk)
+            ->map(function ($items) {
+                return [
+                    'total' => $items->sum('jumlah_terjual'),
+                    'count' => $items->count(),
+                    'avg' => $items->avg('jumlah_terjual'),
+                    'min' => $items->min('jumlah_terjual'),
+                    'max' => $items->max('jumlah_terjual'),
+                ];
+            });
 
         // Monthly breakdown
         $monthlyBreakdown = $salesData->groupBy(function ($item) {
@@ -244,19 +263,21 @@ class SalesDataController extends Controller
         $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
 
         $salesData = SalesData::whereBetween('tanggal_penjualan', [$startDate, $endDate])
+            ->with('product')
             ->orderBy('tanggal_penjualan', 'asc')
             ->get();
 
-        // Group by product
-        $productData = $salesData->groupBy('nama_produk')->map(function ($items) {
-            return [
-                'total' => $items->sum('jumlah_terjual'),
-                'count' => $items->count(),
-                'avg' => $items->avg('jumlah_terjual'),
-                'min' => $items->min('jumlah_terjual'),
-                'max' => $items->max('jumlah_terjual'),
-            ];
-        });
+        // Group by current product name (FK-based, not historical string)
+        $productData = $salesData->groupBy(fn ($item) => $item->product->name ?? $item->nama_produk)
+            ->map(function ($items) {
+                return [
+                    'total' => $items->sum('jumlah_terjual'),
+                    'count' => $items->count(),
+                    'avg' => $items->avg('jumlah_terjual'),
+                    'min' => $items->min('jumlah_terjual'),
+                    'max' => $items->max('jumlah_terjual'),
+                ];
+            });
 
         // Monthly breakdown
         $monthlyBreakdown = $salesData->groupBy(function ($item) {
@@ -376,7 +397,7 @@ class SalesDataController extends Controller
 
         foreach ($salesData as $sale) {
             $sheet->setCellValue('A' . $row, Carbon::parse($sale->tanggal_penjualan)->format('d/m/Y'));
-            $sheet->setCellValue('B' . $row, $sale->nama_produk);
+            $sheet->setCellValue('B' . $row, $sale->product->name ?? $sale->nama_produk);
             $sheet->setCellValue('C' . $row, $sale->jumlah_terjual);
             $row++;
         }
@@ -414,8 +435,7 @@ class SalesDataController extends Controller
 
         $payload = [
             'tanggal_penjualan' => $request->tanggal_penjualan,
-            'strawberry_product_id' => $product->id,
-            'nama_produk' => $product->name, // snapshot
+            'nama_produk' => $product->name, // snapshot untuk histori
             'jumlah_terjual' => $request->jumlah_terjual,
         ];
 

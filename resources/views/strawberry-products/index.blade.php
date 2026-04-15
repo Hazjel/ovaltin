@@ -48,7 +48,7 @@
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-12 w-12">
                                                 @if($product->image)
-                                                    <img class="h-12 w-12 rounded-lg object-cover" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
+                                                    <img class="h-12 w-12 rounded-lg object-cover" src="{{ $product->image_url }}" alt="{{ $product->name }}">
                                                 @else
                                                     <div class="h-12 w-12 rounded-lg bg-sky-100 flex items-center justify-center">
                                                         <svg class="w-6 h-6 text-sky-600" fill="currentColor" viewBox="0 0 20 20">

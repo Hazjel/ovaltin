@@ -45,7 +45,7 @@
                 <!-- Product Image -->
                 <div>
                     @if($product->image)
-                        <img class="w-full h-96 object-cover rounded-xl shadow-lg" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" style="display: block !important; visibility: visible !important; opacity: 1 !important; max-width: 100%;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img class="w-full h-96 object-cover rounded-xl shadow-lg" src="{{ $product->image_url }}" alt="{{ $product->name }}" style="display: block !important; visibility: visible !important; opacity: 1 !important; max-width: 100%;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     @else
                         <div class="w-full h-96 bg-gradient-to-br from-pink-200 to-pink-200 rounded-xl flex items-center justify-center">
                             <svg class="w-32 h-32 text-pink-400" fill="currentColor" viewBox="0 0 20 20">

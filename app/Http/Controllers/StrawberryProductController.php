@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\StrawberryProduct;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class StrawberryProductController extends Controller
 {
@@ -54,6 +56,8 @@ class StrawberryProductController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
             $validated['image'] = $imagePath;
         }
+
+        $validated['created_by'] = Auth::id();
 
         StrawberryProduct::create($validated);
 
@@ -106,7 +110,7 @@ class StrawberryProductController extends Controller
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($strawberryProduct->image) {
-                \Storage::disk('public')->delete($strawberryProduct->image);
+                Storage::disk('public')->delete($strawberryProduct->image);
             }
             $imagePath = $request->file('image')->store('products', 'public');
             $validated['image'] = $imagePath;
@@ -123,6 +127,7 @@ class StrawberryProductController extends Controller
      */
     public function destroy(StrawberryProduct $strawberryProduct)
     {
+        // Soft delete — gambar disimpan supaya bisa dipulihkan lewat restore.
         $strawberryProduct->delete();
 
         return redirect()->route('strawberry-products.index')

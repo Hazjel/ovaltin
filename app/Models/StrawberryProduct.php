@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class StrawberryProduct extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'description',
@@ -22,7 +26,8 @@ class StrawberryProduct extends Model
         'tokopedia_url',
         'shopee_url',
         'lazada_url',
-        'whatsapp_url'
+        'whatsapp_url',
+        'created_by',
     ];
 
     protected $casts = [
@@ -34,6 +39,24 @@ class StrawberryProduct extends Model
     public function salesData()
     {
         return $this->hasMany(SalesData::class, 'strawberry_product_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if (empty($this->image)) {
+            return null;
+        }
+
+        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+            return $this->image;
+        }
+
+        return Storage::url($this->image);
     }
 
     public function getFormattedPriceAttribute()

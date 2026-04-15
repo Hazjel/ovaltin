@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\SalesData;
+use App\Models\StrawberryProduct;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -106,15 +107,22 @@ class SalesDataFromExcelSeeder extends Seeder
                         $jumlah = $this->parseNumber($jumlahValue);
                         
                         if ($jumlah > 0) {
-                            // Cek apakah data sudah ada (untuk menghindari duplikasi)
+                            $product = StrawberryProduct::whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($productName))])->first();
+
+                            if (!$product) {
+                                $this->command->warn("  - Produk '{$productName}' tidak ditemukan di master, dilewati");
+                                continue;
+                            }
+
                             $exists = SalesData::where('tanggal_penjualan', $tanggal)
-                                ->where('nama_produk', $productName)
+                                ->where('strawberry_product_id', $product->id)
                                 ->exists();
 
                             if (!$exists) {
                                 SalesData::create([
                                     'tanggal_penjualan' => $tanggal,
-                                    'nama_produk' => $productName,
+                                    'strawberry_product_id' => $product->id,
+                                    'nama_produk' => $product->name,
                                     'jumlah_terjual' => $jumlah,
                                 ]);
                                 $importedCount++;
@@ -171,8 +179,8 @@ class SalesDataFromExcelSeeder extends Seeder
 
         // Cek apakah nama sudah sesuai dengan produk yang tersedia
         foreach ($availableProducts as $product) {
-            if (strtolower($product) === $name) {
-                return $product;
+            if (strtolower(trim((string) $product->name)) === $name) {
+                return $product->name;
             }
         }
 

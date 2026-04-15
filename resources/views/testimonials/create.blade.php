@@ -17,24 +17,10 @@
                 @csrf
                 
                 <div class="space-y-6">
-                    <!-- Name -->
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', Auth::user()->name) }}" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition @error('name') border-red-300 @enderror">
-                        @error('name')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Email -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" name="email" id="email" value="{{ old('email', Auth::user()->email) }}" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition @error('email') border-red-300 @enderror">
-                        @error('email')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                    <!-- Identitas (diambil otomatis dari profil) -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700">
+                        <p class="font-medium mb-1">Testimoni akan dikirim atas nama:</p>
+                        <p>{{ Auth::user()->name }} &middot; {{ Auth::user()->email }}</p>
                     </div>
 
                     <!-- Rating -->

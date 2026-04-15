@@ -14,7 +14,8 @@ class Testimonial extends Model
         'rating',
         'message',
         'reply',
-        'is_approved'
+        'replied_at',
+        'is_approved',
     ];
 
     protected $casts = [

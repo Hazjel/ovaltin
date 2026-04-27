@@ -81,12 +81,12 @@
                     <div class="flex">
                         <!-- Logo -->
                         <div class="flex-shrink-0 flex items-center">
-                            <div class="flex items-center">
+                            <a href="{{ route('dashboard') }}" class="flex items-center hover:opacity-90 transition">
                                 <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center p-1">
                                     <img src="{{ asset('images/foto logo.webp') }}" alt="Ovaltin Logo" class="w-full h-full object-cover rounded-full">
                                 </div>
                                 <span class="ml-3 text-2xl font-bold text-white">Ovaltin</span>
-                            </div>
+                            </a>
                         </div>
 
                         <!-- Navigation Links -->

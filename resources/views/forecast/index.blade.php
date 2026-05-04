@@ -129,26 +129,29 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                             @foreach($products as $product)
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ ucfirst($product) }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $product->name }}</th>
                             @endforeach
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
+                        @php
+                            $firstSuccessName = collect($forecastResults)->search(fn($r) => $r['success'] ?? false);
+                        @endphp
                         @for($i = 0; $i < $forecastDays; $i++)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if(isset($forecastResults['Agar']) && $forecastResults['Agar']['success'] && isset($forecastResults['Agar']['forecast'][$i]))
-                                    {{ \Carbon\Carbon::parse($forecastResults['Agar']['forecast'][$i]['date'])->format('d/m/Y') }}
+                                @if($firstSuccessName && isset($forecastResults[$firstSuccessName]['forecast'][$i]))
+                                    {{ \Carbon\Carbon::parse($forecastResults[$firstSuccessName]['forecast'][$i]['date'])->format('d/m/Y') }}
                                 @endif
                             </td>
                             @php
                                 $rowTotal = 0;
                             @endphp
                             @foreach($products as $product)
-                                @if(isset($forecastResults[$product]) && $forecastResults[$product]['success'] && isset($forecastResults[$product]['forecast'][$i]))
+                                @if(isset($forecastResults[$product->name]) && $forecastResults[$product->name]['success'] && isset($forecastResults[$product->name]['forecast'][$i]))
                                     @php
-                                        $quantity = $forecastResults[$product]['forecast'][$i]['quantity'];
+                                        $quantity = $forecastResults[$product->name]['forecast'][$i]['quantity'];
                                         $rowTotal += $quantity;
                                     @endphp
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

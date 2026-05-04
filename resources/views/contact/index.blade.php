@@ -5,8 +5,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="relative text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Hubungi Kami</h1>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-4">Hubungi Kami</h1>
+            <p class="text-base sm:text-xl text-gray-600 max-w-3xl mx-auto">
                 Ada pertanyaan tentang produk strawberry kami? Ingin memesan dalam jumlah besar? 
                 Jangan ragu untuk menghubungi tim Ovaltin!
             </p>

@@ -6,8 +6,8 @@
 <div class="space-y-6">
     <!-- Header -->
     <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Testimoni Pelanggan</h1>
-        <p class="text-lg text-gray-600">Apa kata pelanggan tentang produk strawberry kami</p>
+        <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-4">Testimoni Pelanggan</h1>
+        <p class="text-base sm:text-lg text-gray-600">Apa kata pelanggan tentang produk strawberry kami</p>
     </div>
 
     <!-- Add Testimonial Button -->

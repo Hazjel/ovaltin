@@ -75,25 +75,24 @@
 <body class="font-sans antialiased bg-gradient-to-br from-slate-50 via-pink-50 to-slate-100">
     <div class="min-h-screen flex flex-col">
         <!-- Navigation - Pink Theme -->
-        <nav class="shadow-lg sticky top-0 z-50" style="left: 0; right: 0; width: 100vw; margin-left: calc(-50vw + 50%); margin-right: calc(-50vw + 50%); background: #E91E63;">
+        <nav class="shadow-lg sticky top-0 z-50" x-data="{ mobileOpen: false }" style="left: 0; right: 0; width: 100vw; margin-left: calc(-50vw + 50%); margin-right: calc(-50vw + 50%); background: #E91E63;">
             <div class="mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-full">
                 <div class="flex justify-between h-16">
                     <div class="flex">
                         <!-- Logo -->
                         <div class="flex-shrink-0 flex items-center">
                             <a href="{{ route('dashboard') }}" class="flex items-center hover:opacity-90 transition">
-                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center p-1">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center p-1">
                                     <img src="{{ asset('images/foto logo.webp') }}" alt="Ovaltin Logo" class="w-full h-full object-cover rounded-full">
                                 </div>
-                                <span class="ml-3 text-2xl font-bold text-white">Ovaltin</span>
+                                <span class="ml-2 sm:ml-3 text-xl sm:text-2xl font-bold text-white">Ovaltin</span>
                             </a>
                         </div>
 
-                        <!-- Navigation Links -->
-                        <div class="hidden space-x-6 sm:-my-px sm:ml-8 sm:flex items-center">
+                        <!-- Desktop Navigation Links -->
+                        <div class="hidden sm:flex space-x-6 sm:-my-px sm:ml-8 items-center">
                             @auth
                                 @if(Auth::user()->isAdmin())
-                                    {{-- Navbar Admin --}}
                                     <a href="{{ route('sales-data.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('sales-data.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
                                         Data Penjualan
                                     </a>
@@ -104,7 +103,6 @@
                                         Admin Panel
                                     </a>
                                 @else
-                                    {{-- Navbar User (login) — sama dengan Guest --}}
                                     <a href="{{ route('dashboard') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
                                         Dashboard
                                     </a>
@@ -117,7 +115,6 @@
                                     </a>
                                 @endif
                             @else
-                                {{-- Navbar Guest --}}
                                 <a href="{{ route('dashboard') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
                                     Dashboard
                                 </a>
@@ -133,35 +130,191 @@
                     </div>
 
                     <!-- Right side -->
-                    <div class="flex items-center">
+                    <div class="flex items-center space-x-2">
                         @auth
-                            <div class="flex items-center space-x-3">
+                            <!-- Desktop: nama + logout -->
+                            <div class="hidden sm:flex items-center space-x-3">
                                 <span class="text-sm text-white flex items-center">
                                     Selamat datang, <span class="font-medium ml-1">{{ Auth::user()->name }}</span>
                                     @if(Auth::user()->isAdmin())
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white text-pink-400 ml-1 shadow-sm">
-                                            Admin
-                                        </span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white text-pink-400 ml-1 shadow-sm">Admin</span>
                                     @endif
                                 </span>
-                                <form action="{{ route('logout') }}" method="POST" class="inline flex items-center logout-button-container">
+                                <form action="{{ route('logout') }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-pink-200 text-sm font-medium rounded-md text-white bg-pink-500 hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-300 transition duration-150 ease-in-out" style="margin-top: 2px;">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg>
+                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-pink-200 text-sm font-medium rounded-md text-white bg-pink-500 hover:bg-pink-600 transition">
                                         Logout
                                     </button>
                                 </form>
                             </div>
                         @else
-                            <div class="flex items-center space-x-4">
+                            <!-- Desktop: login + register -->
+                            <div class="hidden sm:flex items-center space-x-4">
                                 <a href="{{ route('login') }}" class="text-sm text-white/90 hover:text-white font-medium transition">Login</a>
-                                <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 border border-white/30 text-sm font-medium rounded-md text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm transition">Register</a>
+                                <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 border border-white/30 text-sm font-medium rounded-md text-white bg-white/20 hover:bg-white/30 transition">Register</a>
                             </div>
                         @endauth
+
+                        <!-- Hamburger button (mobile only) -->
+                        <button @click="mobileOpen = !mobileOpen" class="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-pink-700 transition">
+                            <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                            <svg x-show="mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div x-show="mobileOpen"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-2"
+                 class="sm:hidden"
+                 style="display:none; background: #E91E63;">
+
+                @auth
+                    <!-- User info card -->
+                    <div class="mx-4 mt-3 mb-2 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow">
+                            <span class="text-pink-600 font-bold text-base">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                        </div>
+                        <div>
+                            <p class="text-white font-semibold text-sm leading-tight">{{ Auth::user()->name }}</p>
+                            <p class="text-white/70 text-xs">{{ Auth::user()->isAdmin() ? 'Administrator' : 'Member' }}</p>
+                        </div>
+                        @if(Auth::user()->isAdmin())
+                            <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-white text-pink-500 shadow-sm">Admin</span>
+                        @endif
+                    </div>
+
+                    <!-- Menu items -->
+                    <div class="px-4 pb-2 space-y-1">
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('sales-data.index') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('sales-data.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                <span>Data Penjualan</span>
+                            </a>
+                            <a href="{{ route('strawberry-products.index') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('strawberry-products.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                                <span>Produk Stroberi</span>
+                            </a>
+                            <a href="{{ route('admin.dashboard') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                                </svg>
+                                <span>Admin Panel</span>
+                            </a>
+                        @else
+                            <a href="{{ route('dashboard') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                </svg>
+                                <span>Dashboard</span>
+                            </a>
+                            <a href="{{ route('user.products.index') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('user.products.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                                <span>Daftar Produk</span>
+                            </a>
+                            <a href="{{ route('testimonials.index') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('testimonials.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                <span>Testimoni</span>
+                            </a>
+                            <a href="{{ route('contact.index') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('contact.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                                <span>Kontak Kami</span>
+                            </a>
+                        @endif
+                    </div>
+
+                    <!-- Logout -->
+                    <div class="px-4 pb-4">
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl text-sm font-semibold bg-white/10 border border-white/30 text-white hover:bg-white/20 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+
+                @else
+                    <!-- Guest menu -->
+                    <div class="px-4 pt-3 pb-2 space-y-1">
+                        <a href="{{ route('dashboard') }}" @click="mobileOpen=false"
+                           class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="{{ route('user.products.index') }}" @click="mobileOpen=false"
+                           class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('user.products.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                            <span>Daftar Produk</span>
+                        </a>
+                        <a href="{{ route('testimonials.index') }}" @click="mobileOpen=false"
+                           class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('testimonials.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            <span>Testimoni</span>
+                        </a>
+                        <a href="{{ route('contact.index') }}" @click="mobileOpen=false"
+                           class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('contact.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            <span>Kontak Kami</span>
+                        </a>
+                    </div>
+
+                    <!-- Login / Register -->
+                    <div class="px-4 pb-4 grid grid-cols-2 gap-3">
+                        <a href="{{ route('login') }}" @click="mobileOpen=false"
+                           class="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl text-sm font-semibold bg-white text-pink-600 hover:bg-pink-50 shadow transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            <span>Login</span>
+                        </a>
+                        <a href="{{ route('register') }}" @click="mobileOpen=false"
+                           class="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 border-white/50 text-white hover:bg-white/15 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span>Register</span>
+                        </a>
+                    </div>
+                @endauth
             </div>
         </nav>
 

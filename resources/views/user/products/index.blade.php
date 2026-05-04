@@ -15,8 +15,8 @@
 <div class="space-y-6">
     <!-- Header -->
     <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Katalog Produk Strawberry</h1>
-        <p class="text-lg text-gray-600">Temukan berbagai produk strawberry berkualitas premium dari kebun kami</p>
+        <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-4">Katalog Produk Strawberry</h1>
+        <p class="text-base sm:text-lg text-gray-600">Temukan berbagai produk strawberry berkualitas premium dari kebun kami</p>
     </div>
 
     <!-- Products Grid -->

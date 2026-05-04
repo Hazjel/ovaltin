@@ -495,16 +495,16 @@ html {
                                 </div>
         <div class="p-6 sm:p-8">
             @if($testimonials->count() > 0)
-                <!-- Auto-scrolling testimonials container -->
-                <div class="relative overflow-hidden rounded-xl">
-                    <div id="testimonials-container" class="flex transition-transform duration-1000 ease-in-out" style="width: {{ $testimonials->count() * 33.333 }}%;">
+                <!-- Testimonials: scroll-snap (swipe di mobile, nav button di desktop) -->
+                <div class="relative rounded-xl">
+                    <div id="testimonials-container" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-0" style="-ms-overflow-style:none; scrollbar-width:none;">
                         @foreach($testimonials as $index => $testimonial)
-                            <div class="w-1/3 px-3 flex-shrink-0">
-                                <div class="bg-gradient-to-br {{ $index % 3 == 0 ? 'from-pink-50 to-pink-50 border-pink-100' : ($index % 3 == 1 ? 'from-pink-50 to-pink-50 border-pink-100' : 'from-pink-50 to-pink-50 border-pink-100') }} rounded-2xl p-6 hover:shadow-lg transition border-2 h-full">
+                            <div class="snap-start flex-shrink-0 w-full sm:w-1/3 px-2">
+                                <div class="bg-gradient-to-br from-pink-50 to-pink-50 border-pink-100 rounded-2xl p-6 hover:shadow-lg transition border-2 h-full">
                                     <div class="flex items-center mb-4">
-                                        <div class="w-12 h-12 bg-gradient-to-br {{ $index % 3 == 0 ? 'from-pink-400 to-pink-500' : ($index % 3 == 1 ? 'from-pink-400 to-pink-500' : 'from-pink-500 to-pink-600') }} rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                                             {{ strtoupper(substr($testimonial->name, 0, 1)) }}
-                            </div>
+                                        </div>
                                         <div class="ml-3">
                                             <h4 class="font-bold text-gray-900">{{ $testimonial->name }}</h4>
                                             <div class="flex text-yellow-400">
@@ -513,18 +513,18 @@ html {
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                     </svg>
                                                 @endfor
-                </div>
-            </div>
-        </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <p class="text-gray-600 italic">"{{ $testimonial->message }}"</p>
                                 </div>
-                        </div>
-                    @endforeach
-        </div>
-    </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
 
-                <!-- Navigation controls -->
-                <div class="mt-6 flex items-center justify-center space-x-4">
+                <!-- Navigation controls (hidden on mobile — gunakan swipe) -->
+                <div class="mt-6 hidden sm:flex items-center justify-center space-x-4">
                     <button id="prev-btn" class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-full transition transform hover:scale-110 shadow-lg">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -535,7 +535,8 @@ html {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </button>
-            </div>
+                </div>
+                <p class="mt-3 text-center text-xs text-gray-400 sm:hidden">Geser untuk melihat testimoni lainnya</p>
                                             @else
                 <div class="text-center py-8">
                     <div class="bg-gradient-to-br from-pink-50 to-pink-50 rounded-2xl p-8 border-2 border-pink-100">
@@ -575,92 +576,47 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('testimonials-container');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
-    
+
     if (!container) return;
-    
-    let currentIndex = 0;
-    let intervalId;
-    
-    const testimonials = container.children;
-    const totalTestimonials = testimonials.length;
-    
-    // Jika testimoni kurang dari 4, sembunyikan navigasi
-    if (totalTestimonials <= 3) {
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-        return;
+
+    function cardWidth() {
+        const first = container.querySelector('div');
+        return first ? first.offsetWidth : container.clientWidth;
     }
-    
-    function updatePosition() {
-        const translateX = -(currentIndex * 33.333); // 33.333% per testimoni (3 per view)
-        container.style.transform = `translateX(${translateX}%)`;
-    }
-    
-    function nextSlide() {
-        currentIndex++;
-        if (currentIndex >= totalTestimonials - 2) { // -2 karena kita show 3 per view
-            currentIndex = 0; // Loop kembali ke awal
-        }
-        updatePosition();
-    }
-    
-    function prevSlide() {
-        currentIndex--;
-        if (currentIndex < 0) {
-            currentIndex = totalTestimonials - 3; // Loop ke akhir
-        }
-        updatePosition();
-    }
-    
-    function startAutoScroll() {
-        if (intervalId) clearInterval(intervalId);
-        intervalId = setInterval(nextSlide, 3000); // 3 detik per slide
-    }
-    
-    function pauseAutoScroll() {
-        if (intervalId) {
-            clearInterval(intervalId);
-            intervalId = null;
+
+    function scrollNext() {
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        if (container.scrollLeft >= maxScroll - 10) {
+            container.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            container.scrollBy({ left: cardWidth(), behavior: 'smooth' });
         }
     }
-    
-    // Event listeners untuk navigasi manual
-    nextBtn.addEventListener('click', function() {
-        pauseAutoScroll();
-        nextSlide();
-        startAutoScroll(); // Restart auto-scroll setelah manual navigation
-    });
-    
-    prevBtn.addEventListener('click', function() {
-        pauseAutoScroll();
-        prevSlide();
-        startAutoScroll(); // Restart auto-scroll setelah manual navigation
-    });
-    
-    // Pause on hover
-    container.addEventListener('mouseenter', function() {
-        pauseAutoScroll();
-    });
-    
-    container.addEventListener('mouseleave', function() {
-        startAutoScroll();
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowLeft') {
-            pauseAutoScroll();
-            prevSlide();
-            startAutoScroll();
-        } else if (e.key === 'ArrowRight') {
-            pauseAutoScroll();
-            nextSlide();
-            startAutoScroll();
+
+    function scrollPrev() {
+        if (container.scrollLeft <= 10) {
+            container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+        } else {
+            container.scrollBy({ left: -cardWidth(), behavior: 'smooth' });
         }
+    }
+
+    let intervalId = setInterval(scrollNext, 3000);
+
+    if (prevBtn) prevBtn.addEventListener('click', function() {
+        clearInterval(intervalId);
+        scrollPrev();
+        intervalId = setInterval(scrollNext, 3000);
     });
-    
-    // Start auto-scroll
-    startAutoScroll();
+
+    if (nextBtn) nextBtn.addEventListener('click', function() {
+        clearInterval(intervalId);
+        scrollNext();
+        intervalId = setInterval(scrollNext, 3000);
+    });
+
+    container.addEventListener('mouseenter', () => clearInterval(intervalId));
+    container.addEventListener('mouseleave', () => { intervalId = setInterval(scrollNext, 3000); });
 });
 
 // Auto-scroll untuk hero section

@@ -134,6 +134,18 @@ class StrawberryProductController extends Controller
             ->with('success', 'Produk stroberi berhasil dihapus!');
     }
 
+    public function addStock(Request $request, StrawberryProduct $strawberryProduct)
+    {
+        $request->validate([
+            'tambah_stok' => 'required|integer|min:1|max:9999',
+        ]);
+
+        $strawberryProduct->increment('stock_quantity', $request->tambah_stok);
+
+        return redirect()->route('strawberry-products.index')
+            ->with('success', "Stok {$strawberryProduct->name} berhasil ditambah {$request->tambah_stok} unit. Total stok sekarang: {$strawberryProduct->fresh()->stock_quantity} unit.");
+    }
+
     /**
      * Update the status of the specified resource.
      */

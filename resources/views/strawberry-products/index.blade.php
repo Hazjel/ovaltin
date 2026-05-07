@@ -3,7 +3,7 @@
 @section('title', 'Daftar Produk Stroberi')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6" x-data="{ stockModal: false, stockUrl: '', stockName: '', stockCurrent: 0 }">
     <!-- Header -->
     <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
@@ -108,6 +108,11 @@
                                             <a href="{{ route('strawberry-products.edit', $product) }}" class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100 hover:bg-amber-100">
                                                 Edit
                                             </a>
+                                            <button type="button"
+                                                @click="stockModal=true; stockUrl='{{ route('strawberry-products.add-stock', $product) }}'; stockName={{ json_encode($product->name) }}; stockCurrent={{ $product->stock_quantity }}"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100">
+                                                Stok+
+                                            </button>
                                             <form action="{{ route('strawberry-products.destroy', $product) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
                                                 @csrf
                                                 @method('DELETE')
@@ -146,6 +151,47 @@
             @endif
         </div>
     </div>
+
+    <!-- Modal Tambah Stok -->
+    <div x-show="stockModal" style="display:none; background:rgba(0,0,0,0.4);"
+        class="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div @click.outside="stockModal=false"
+            style="width:100%; max-width:400px;"
+            class="bg-white rounded-2xl shadow-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">Tambah Stok</h3>
+                <button @click="stockModal=false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-1">Produk: <span class="font-semibold text-gray-900" x-text="stockName"></span></p>
+            <p class="text-sm text-gray-600 mb-4">Stok saat ini: <span class="font-semibold" style="color:#16a34a;" x-text="stockCurrent + ' unit'"></span></p>
+
+            <form :action="stockUrl" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah yang ditambahkan</label>
+                    <input type="number" name="tambah_stok" min="1" max="9999"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+                        placeholder="Masukkan jumlah stok..." required>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" @click="stockModal=false"
+                        class="flex-1 px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        style="background:#16a34a; color:white;"
+                        class="flex-1 px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90">
+                        OK
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

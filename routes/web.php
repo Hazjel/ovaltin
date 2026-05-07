@@ -44,6 +44,7 @@ Route::get('/testimonials/{testimonial}', [TestimonialController::class, 'show']
 
 Route::resource('strawberry-products', StrawberryProductController::class);
 Route::patch('strawberry-products/{strawberryProduct}/status', [StrawberryProductController::class, 'updateStatus'])->name('strawberry-products.update-status');
+Route::patch('strawberry-products/{strawberryProduct}/add-stock', [StrawberryProductController::class, 'addStock'])->name('strawberry-products.add-stock');
 
 // User product routes
 Route::prefix('user')->name('user.')->group(function () {

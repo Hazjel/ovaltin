@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Menambahkan kolom 'image' ke tabel 'strawberry_products' untuk menyimpan path gambar produk
         Schema::table('strawberry_products', function (Blueprint $table) {
+            // Kolom untuk path gambar produk (opsional), ditempatkan setelah kolom 'category'
             $table->string('image')->nullable()->after('category');
         });
     }
@@ -21,6 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Menghapus kolom 'image' dari tabel 'strawberry_products' untuk rollback migrasi
         Schema::table('strawberry_products', function (Blueprint $table) {
             $table->dropColumn('image');
         });

@@ -11,6 +11,8 @@ use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\AdminTestimonialController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\Admin\AdminFAQController;
+use App\Http\Controllers\Admin\AdminPackageOrderController;
+use App\Http\Controllers\PackageOrderController;
 
 // Public routes
 Route::get('/', function () {
@@ -59,6 +61,11 @@ Route::get('/faq', [FAQController::class, 'index'])->name('faqs.index');
 Route::get('/kontak', [App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
 Route::post('/kontak', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 
+// Package order routes
+Route::get('/order-paket', [PackageOrderController::class, 'index'])->name('order-paket.index');
+Route::post('/order-paket', [PackageOrderController::class, 'store'])->name('order-paket.store');
+Route::get('/order-paket/success', [PackageOrderController::class, 'success'])->name('order-paket.success');
+
 // Education pages
 Route::get('/edukasi/perawatan-strawberry', function () {
     return view('education.strawberry-care');
@@ -68,13 +75,6 @@ Route::get('/edukasi/pengendalian-hama', function () {
     return view('education.pest-control');
 })->name('education.pest-control');
 
-Route::get('/edukasi/cara-menanam', function () {
-    return view('education.planting-guide');
-})->name('education.planting-guide');
-
-Route::get('/edukasi/panen-penyimpanan', function () {
-    return view('education.harvest-storage');
-})->name('education.harvest-storage');
 
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -110,6 +110,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Admin FAQ routes
     Route::resource('faqs', AdminFAQController::class);
+
+    // Admin package order routes
+    Route::get('/orders', [AdminPackageOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [AdminPackageOrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [AdminPackageOrderController::class, 'updateStatus'])->name('orders.update-status');
 
 
 });// Sales Data routes - hanya untuk admin

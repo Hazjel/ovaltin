@@ -378,6 +378,25 @@
                     </span>
                 </a>
                 
+                <a href="{{ route('admin.orders.index') }}" class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 rounded-lg border border-gray-200 hover:border-gray-300">
+                    <div>
+                        <span class="rounded-lg inline-flex p-3 bg-emerald-50 text-emerald-700 ring-4 ring-white">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="mt-8">
+                        <h3 class="text-lg font-medium">
+                            <span class="absolute inset-0" aria-hidden="true"></span>
+                            Order Paketan
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-500">
+                            Kelola order paketan dari pelanggan.
+                        </p>
+                    </div>
+                </a>
+
                 <a href="{{ route('admin.contact.index') }}" class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 rounded-lg border border-gray-200 hover:border-gray-300">
                     <div>
                         <span class="rounded-lg inline-flex p-3 bg-pink-50 text-pink-700 ring-4 ring-white">

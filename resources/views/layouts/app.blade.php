@@ -107,6 +107,9 @@
                                         Dashboard
                                     </a>
                                     @include('layouts.partials.nav-produk-dropdown')
+                                    <a href="{{ route('order-paket.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('order-paket.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
+                                        Order Paket
+                                    </a>
                                     <a href="{{ route('testimonials.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('testimonials.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
                                         Testimoni
                                     </a>
@@ -119,6 +122,9 @@
                                     Dashboard
                                 </a>
                                 @include('layouts.partials.nav-produk-dropdown')
+                                <a href="{{ route('order-paket.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('order-paket.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
+                                    Order Paket
+                                </a>
                                 <a href="{{ route('testimonials.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('testimonials.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
                                     Testimoni
                                 </a>
@@ -233,6 +239,13 @@
                                 </svg>
                                 <span>Daftar Produk</span>
                             </a>
+                            <a href="{{ route('order-paket.index') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('order-paket.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                                <span>Order Paket</span>
+                            </a>
                             <a href="{{ route('testimonials.index') }}" @click="mobileOpen=false"
                                class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('testimonials.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,6 +293,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                             </svg>
                             <span>Daftar Produk</span>
+                        </a>
+                        <a href="{{ route('order-paket.index') }}" @click="mobileOpen=false"
+                           class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('order-paket.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            </svg>
+                            <span>Order Paket</span>
                         </a>
                         <a href="{{ route('testimonials.index') }}" @click="mobileOpen=false"
                            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('testimonials.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
@@ -377,7 +397,7 @@
                         <ul class="space-y-3">
                             <li><a href="{{ route('user.products.index') }}" class="text-white/90 hover:text-white transition duration-200">Produk</a></li>
                             <li><a href="{{ route('testimonials.index') }}" class="text-white/90 hover:text-white transition duration-200">Testimoni</a></li>
-                            <li><a href="#" class="text-white/90 hover:text-white transition duration-200">Pemesanan</a></li>
+                            <li><a href="{{ route('order-paket.index') }}" class="text-white/90 hover:text-white transition duration-200">Order Paket</a></li>
                         </ul>
                     </div>
 

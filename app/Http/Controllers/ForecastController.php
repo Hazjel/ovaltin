@@ -12,7 +12,7 @@ class ForecastController extends Controller
     public function index(Request $request)
     {
         $forecastDays = $request->get('forecast_days', 30);
-        $selectedProduct = $request->get('product', 'Agar');
+        $selectedProduct = $request->get('product', '__all__');
         $modelType = 'linear';
 
         $products = StrawberryProduct::orderBy('name')->get();
@@ -23,6 +23,10 @@ class ForecastController extends Controller
 
         foreach ($products as $product) {
             $productSales = SalesData::where('strawberry_product_id', $product->id)
+                ->orWhere(function ($q) use ($product) {
+                    $q->whereNull('strawberry_product_id')
+                      ->where('nama_produk', $product->name);
+                })
                 ->orderBy('tanggal_penjualan', 'asc')
                 ->get();
 

@@ -21,17 +21,29 @@
                 </svg>
                 Kembali ke Data Penjualan
             </a>
-            <!-- Days Selector -->
-            <form action="{{ route('forecast.index') }}" method="GET" class="flex items-center space-x-2">
+            <!-- Filter Form -->
+            <form action="{{ route('forecast.index') }}" method="GET" class="flex items-center flex-wrap gap-3">
                 <input type="hidden" name="model_type" value="linear">
-                <label for="forecast_days" class="text-sm text-gray-700">Hari Forecast:</label>
-                <select id="forecast_days" name="forecast_days" onchange="this.form.submit()" 
-                        class="border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
-                    <option value="7" {{ $forecastDays == 7 ? 'selected' : '' }}>7 Hari</option>
-                    <option value="14" {{ $forecastDays == 14 ? 'selected' : '' }}>14 Hari</option>
-                    <option value="30" {{ $forecastDays == 30 ? 'selected' : '' }}>30 Hari</option>
-                    <option value="60" {{ $forecastDays == 60 ? 'selected' : '' }}>60 Hari</option>
-                </select>
+                <div class="flex items-center gap-2">
+                    <label for="product_select" class="text-sm text-gray-700">Produk:</label>
+                    <select id="product_select" name="product" onchange="this.form.submit()"
+                            class="border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-sm">
+                        <option value="__all__" {{ $selectedProduct === '__all__' ? 'selected' : '' }}>Semua Produk</option>
+                        @foreach($products as $p)
+                            <option value="{{ $p->name }}" {{ $selectedProduct === $p->name ? 'selected' : '' }}>{{ $p->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="forecast_days" class="text-sm text-gray-700">Hari Forecast:</label>
+                    <select id="forecast_days" name="forecast_days" onchange="this.form.submit()"
+                            class="border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-sm">
+                        <option value="7" {{ $forecastDays == 7 ? 'selected' : '' }}>7 Hari</option>
+                        <option value="14" {{ $forecastDays == 14 ? 'selected' : '' }}>14 Hari</option>
+                        <option value="30" {{ $forecastDays == 30 ? 'selected' : '' }}>30 Hari</option>
+                        <option value="60" {{ $forecastDays == 60 ? 'selected' : '' }}>60 Hari</option>
+                    </select>
+                </div>
             </form>
         </div>
     </div>
@@ -72,6 +84,7 @@
     @if(!empty($chartData))
     <div class="grid grid-cols-1 gap-6">
         @foreach($chartData as $product => $data)
+        @if($selectedProduct !== '__all__' && $selectedProduct !== $product) @continue @endif
         <div class="bg-white shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
@@ -115,6 +128,32 @@
             </div>
         </div>
         @endforeach
+    </div>
+    @endif
+
+    <!-- Products with insufficient data -->
+    @php
+        $insufficientProducts = collect($forecastResults)->filter(fn($r) => !($r['success'] ?? false));
+    @endphp
+    @if($insufficientProducts->isNotEmpty())
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            <div>
+                <p class="text-sm font-medium text-yellow-800">Beberapa produk belum dapat diprediksi</p>
+                <p class="text-sm text-yellow-700 mt-1">Produk berikut memerlukan minimal 3 data penjualan historis:</p>
+                <ul class="mt-2 list-disc list-inside text-sm text-yellow-700 space-y-1">
+                    @foreach($insufficientProducts->keys() as $name)
+                        <li>{{ $name }}</li>
+                    @endforeach
+                </ul>
+                <a href="{{ route('sales-data.index') }}" class="inline-block mt-2 text-sm font-medium text-yellow-800 underline hover:text-yellow-900">
+                    Tambah data penjualan →
+                </a>
+            </div>
+        </div>
     </div>
     @endif
 

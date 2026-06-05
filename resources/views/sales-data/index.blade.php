@@ -474,6 +474,14 @@
     // Monthly/Daily Chart
     const monthlyCtx = document.getElementById('monthlyChart');
 
+    const totalProducts = {{ count($products) }};
+    function genColor(index, alpha = 0.8) {
+        const hue = Math.round((index / totalProducts) * 360);
+        return alpha < 1
+            ? `hsla(${hue}, 70%, 55%, ${alpha})`
+            : `hsl(${hue}, 70%, 45%)`;
+    }
+
     @if($monthlyData['type'] == 'daily')
         // Daily chart (per hari dalam bulan)
         const chartData = {
@@ -485,18 +493,8 @@
                     data: @json($monthlyData['data']->map(function($day) use ($product) {
                         return isset($day['data'][$product->name]) ? $day['data'][$product->name] : 0;
                     })->values()),
-                    backgroundColor: [
-                        'rgba(239, 68, 68, 0.8)',
-                        'rgba(34, 197, 94, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(251, 146, 60, 0.8)',
-                    ][{{ $index }}],
-                    borderColor: [
-                        'rgb(239, 68, 68)',
-                        'rgb(34, 197, 94)',
-                        'rgb(59, 130, 246)',
-                        'rgb(251, 146, 60)',
-                    ][{{ $index }}],
+                    backgroundColor: genColor({{ $index }}, 0.8),
+                    borderColor: genColor({{ $index }}, 1),
                     borderWidth: 1
                 },
                 @endforeach
@@ -513,18 +511,8 @@
                     data: @json($monthlyData['data']->map(function($month) use ($product) {
                         return isset($month['data'][$product->name]) ? $month['data'][$product->name] : 0;
                     })->values()),
-                    backgroundColor: [
-                        'rgba(239, 68, 68, 0.8)',
-                        'rgba(34, 197, 94, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(251, 146, 60, 0.8)',
-                    ][{{ $index }}],
-                    borderColor: [
-                        'rgb(239, 68, 68)',
-                        'rgb(34, 197, 94)',
-                        'rgb(59, 130, 246)',
-                        'rgb(251, 146, 60)',
-                    ][{{ $index }}],
+                    backgroundColor: genColor({{ $index }}, 0.8),
+                    borderColor: genColor({{ $index }}, 1),
                     borderWidth: 1
                 },
                 @endforeach

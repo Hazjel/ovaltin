@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -29,14 +30,18 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            
+
             $user = Auth::user();
+            Log::info('Login berhasil', ['email' => $user->email, 'ip' => $request->ip()]);
+
             if ($user->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
             }
-            
+
             return redirect()->intended(route('dashboard'));
         }
+
+        Log::warning('Login gagal', ['email' => $request->email, 'ip' => $request->ip()]);
 
         return back()->withErrors([
             'email' => 'Email atau password tidak valid.',

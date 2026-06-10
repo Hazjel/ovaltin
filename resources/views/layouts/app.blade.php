@@ -44,11 +44,9 @@
         </script>
     @endif
     <style>
-        /* Ensure navbar is full width - break out of container */
-        nav.bg-gradient-to-r {
-            margin-left: calc(-50vw + 50%) !important;
-            margin-right: calc(-50vw + 50%) !important;
-            width: 100vw !important;
+        /* Navbar full width */
+        nav {
+            width: 100% !important;
             max-width: 100vw !important;
             position: relative;
         }
@@ -75,7 +73,7 @@
 <body class="font-sans antialiased bg-gradient-to-br from-slate-50 via-pink-50 to-slate-100">
     <div class="min-h-screen flex flex-col">
         <!-- Navigation - Pink Theme -->
-        <nav class="shadow-lg sticky top-0 z-50" x-data="{ mobileOpen: false }" style="left: 0; right: 0; width: 100vw; margin-left: calc(-50vw + 50%); margin-right: calc(-50vw + 50%); background: #E91E63;">
+        <nav class="shadow-lg sticky top-0 z-50 w-full" x-data="{ mobileOpen: false }" style="background: #E91E63;">
             <div class="mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-full">
                 <div class="flex justify-between h-16">
                     <div class="flex">

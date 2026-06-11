@@ -266,13 +266,13 @@ html {
                 <svg class="w-6 h-6 mr-2 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-10.747S17.5 6.253 12 6.253z"></path>
                 </svg>
-                Panduan Edukasi Strawberry
+                Kenali Produk Kami
             </h2>
         </div>
         
         <div class="p-6 sm:p-8">
             <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
-                Pelajari manfaat stroberi dan berbagai produk olahan sehat untuk anak dan remaja dari Dapur Ovaltin.
+                Produk olahan stroberi Dapur Ovaltin — camilan sehat, lezat, tanpa pengawet, untuk seluruh keluarga.
             </p>
 
             <!-- Edukasi Item - Text Kiri, Image Kanan -->

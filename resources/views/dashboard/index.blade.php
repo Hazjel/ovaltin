@@ -316,7 +316,7 @@ html {
                     <div class="order-1 md:order-2 relative group">
                         <div class="bg-gradient-to-br from-pink-100 to-pink-100 rounded-2xl overflow-hidden h-[250px] sm:h-[300px] md:h-[350px] shadow-xl">
                             <img
-                                src="{{ asset('images/foto logo.webp') }}"
+                                src="{{ asset('images/produk-ovaltin.png') }}"
                                 alt="Produk Dapur Ovaltin"
                                 class="w-full h-full object-cover hover:scale-105 transition duration-500"
                             >

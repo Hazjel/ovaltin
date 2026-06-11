@@ -36,7 +36,7 @@
             </div>
             <div class="relative">
                 <div class="absolute -inset-4 rounded-3xl bg-pink-200/40 blur-3xl"></div>
-                <img src="{{ asset('images/foto logo.webp') }}"
+                <img src="{{ asset('images/produk-ovaltin.png') }}"
                      alt="Produk Dapur Ovaltin"
                      class="relative rounded-2xl shadow-2xl border border-slate-100 w-full h-full object-cover">
             </div>

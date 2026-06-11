@@ -23,7 +23,7 @@ Route::get('/', function () {
 // Authentication routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 
@@ -51,9 +51,11 @@ Route::post('/testimonials', [TestimonialController::class, 'store'])->name('tes
 // Testimonial routes - show bisa diakses tanpa login (setelah create)
 Route::get('/testimonials/{testimonial}', [TestimonialController::class, 'show'])->name('testimonials.show');
 
-Route::resource('strawberry-products', StrawberryProductController::class);
-Route::patch('strawberry-products/{strawberryProduct}/status', [StrawberryProductController::class, 'updateStatus'])->name('strawberry-products.update-status');
-Route::patch('strawberry-products/{strawberryProduct}/add-stock', [StrawberryProductController::class, 'addStock'])->name('strawberry-products.add-stock');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('strawberry-products', StrawberryProductController::class);
+    Route::patch('strawberry-products/{strawberryProduct}/status', [StrawberryProductController::class, 'updateStatus'])->name('strawberry-products.update-status');
+    Route::patch('strawberry-products/{strawberryProduct}/add-stock', [StrawberryProductController::class, 'addStock'])->name('strawberry-products.add-stock');
+});
 
 // User product routes
 Route::prefix('user')->name('user.')->group(function () {
@@ -79,7 +81,7 @@ Route::get('/edukasi/perawatan-strawberry', function () {
 })->name('education.strawberry-care');
 
 Route::get('/edukasi/pengendalian-hama', function () {
-    return view('education.pest-control');
+    return redirect()->route('education.strawberry-care', [], 301);
 })->name('education.pest-control');
 
 

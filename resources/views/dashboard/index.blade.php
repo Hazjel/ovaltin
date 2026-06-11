@@ -272,106 +272,53 @@ html {
         
         <div class="p-6 sm:p-8">
             <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
-                Pelajari cara merawat, menanam, dan memaksimalkan hasil panen strawberry Anda dengan panduan lengkap dari para ahli kami.
+                Pelajari manfaat stroberi dan berbagai produk olahan sehat untuk anak dan remaja dari Dapur Ovaltin.
             </p>
 
-            <!-- Edukasi Item 2 - Text Kiri, Video/Image Kanan -->
-            <div class="mb-12 lg:mb-16">
+            <!-- Edukasi Item - Text Kiri, Image Kanan -->
+            <div>
                 <div class="grid md:grid-cols-2 gap-6 lg:gap-10 items-center">
-                    <!-- Text Content (Order 2 on Mobile, 1 on Desktop) -->
+                    <!-- Text Content -->
                     <div class="order-2 md:order-1">
                         <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                            Perawatan dan Pemupukan Strawberry
+                            Stroberi sebagai Alternatif Camilan Sehat untuk Anak dan Remaja
                         </h3>
                         <p class="text-gray-600 mb-4 leading-relaxed">
-                            Strawberry memerlukan perawatan khusus untuk menghasilkan buah yang besar dan manis. Ikuti panduan pemupukan dan irigasi yang tepat.
+                            Stroberi bukan sekadar buah segar — kaya vitamin C, serat, dan antioksidan yang mendukung
+                            tumbuh kembang anak dan remaja aktif.
                         </p>
                         <ul class="space-y-2 mb-6">
                             <li class="flex items-center text-gray-700">
                                 <svg class="w-5 h-5 text-pink-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
                                 </svg>
-                                Irigasi rutin 2-3 kali seminggu
+                                Vitamin C tinggi untuk daya tahan tubuh
                             </li>
                             <li class="flex items-center text-gray-700">
                                 <svg class="w-5 h-5 text-pink-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
                                 </svg>
-                                Gunakan pupuk organik berkualitas tinggi
+                                Antioksidan melindungi sel dari radikal bebas
                             </li>
                             <li class="flex items-center text-gray-700">
                                 <svg class="w-5 h-5 text-pink-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
                                 </svg>
-                                Pantau pH tanah secara berkala
+                                Serat alami baik untuk pencernaan
                             </li>
                         </ul>
                         <a href="{{ route('education.strawberry-care') }}" class="inline-flex px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition font-semibold">
                             Baca Selengkapnya
                         </a>
                     </div>
-                    
-                    <!-- Image Container (Order 1 on Mobile, 2 on Desktop) -->
+
+                    <!-- Image Container -->
                     <div class="order-1 md:order-2 relative group">
                         <div class="bg-gradient-to-br from-pink-100 to-pink-100 rounded-2xl overflow-hidden h-[250px] sm:h-[300px] md:h-[350px] shadow-xl">
-                            <img 
-                                src="https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=600&h=400&fit=crop" 
-                                alt="Perawatan Strawberry"
+                            <img
+                                src="{{ asset('images/foto logo.webp') }}"
+                                alt="Produk Dapur Ovaltin"
                                 class="w-full h-full object-cover hover:scale-105 transition duration-500"
-                            >
-                        </div>
-                        <div class="absolute -top-2 -left-2 w-20 h-20 bg-pink-500 rounded-full opacity-20 blur-2xl"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Divider -->
-            <div class="my-12 lg:my-16 border-t-2 border-pink-100"></div>
-
-            <!-- Edukasi Item 4 - Text Kiri, Image Kanan -->
-            <div>
-                <div class="grid md:grid-cols-2 gap-6 lg:gap-10 items-center">
-                    <!-- Text Content (Order 2 on Mobile, 1 on Desktop) -->
-                    <div class="order-2 md:order-1">
-                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                            Pengendalian Hama dan Penyakit
-                        </h3>
-                        <p class="text-gray-600 mb-4 leading-relaxed">
-                            Strawberry rentan terhadap berbagai hama dan penyakit. Ketahui cara mencegah dan mengatasi masalah ini secara alami.
-                        </p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center text-gray-700">
-                                <svg class="w-5 h-5 text-pink-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
-                                </svg>
-                                Gunakan pestisida organik ramah lingkungan
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <svg class="w-5 h-5 text-pink-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
-                                </svg>
-                                Jaga kebersihan lahan secara rutin
-                            </li>
-                            <li class="flex items-center text-gray-700">
-                                <svg class="w-5 h-5 text-pink-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
-                                </svg>
-                                Monitor tanaman setiap hari untuk deteksi dini
-                            </li>
-                        </ul>
-                        <a href="{{ route('education.pest-control') }}" class="inline-flex px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition font-semibold">
-                            Baca Selengkapnya
-                        </a>
-                    </div>
-                    
-                    <!-- Image Container (Order 1 on Mobile, 2 on Desktop) -->
-                    <div class="order-1 md:order-2 relative group">
-                        <div class="bg-gradient-to-br from-pink-100 to-pink-100 rounded-2xl overflow-hidden h-[250px] sm:h-[300px] md:h-[350px] shadow-xl">
-                            <img 
-                                src="{{ asset('images/pengendalian-hama.webp') }}" 
-                                alt="Pengendalian Hama"
-                                class="w-full h-full object-cover hover:scale-105 transition duration-500"
-                                onerror="this.onerror=null; this.src='{{ asset('images/strawberry-farm.webp') }}';"
                             >
                         </div>
                         <div class="absolute -top-2 -left-2 w-20 h-20 bg-pink-500 rounded-full opacity-20 blur-2xl"></div>

@@ -23,6 +23,12 @@ class AdminMiddleware
             abort(403, 'Akses ditolak. Hanya admin yang dapat mengakses halaman ini.');
         }
 
+        try {
+            \App\Models\InAppNotification::syncWeeklyNotifications();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal sinkronisasi notifikasi mingguan: ' . $e->getMessage());
+        }
+
         return $next($request);
     }
 }

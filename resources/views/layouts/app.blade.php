@@ -139,6 +139,85 @@
                         @auth
                             <!-- Desktop: nama + logout -->
                             <div class="hidden sm:flex items-center space-x-3">
+                                @if(Auth::user()->isAdmin())
+                                    @php
+                                        $unreadNotificationsCount = \App\Models\InAppNotification::where('is_read', false)->count();
+                                        $recentNotifications = \App\Models\InAppNotification::latest()->take(5)->get();
+                                    @endphp
+                                    <div class="relative mr-2" x-data="{ open: false }" @click.away="open = false">
+                                        <!-- Bell Button -->
+                                        <button @click="open = !open" class="relative p-1 text-pink-100 hover:text-white focus:outline-none transition duration-150 ease-in-out flex items-center">
+                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                            </svg>
+                                            @if($unreadNotificationsCount > 0)
+                                                <span class="absolute top-0.5 right-0.5 block h-2.5 w-2.5 rounded-full bg-white ring-2 ring-pink-500 animate-pulse"></span>
+                                            @endif
+                                        </button>
+
+                                        <!-- Dropdown menu -->
+                                        <div x-show="open" 
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0 transform scale-95"
+                                             x-transition:enter-end="opacity-100 transform scale-100"
+                                             x-transition:leave="transition ease-in duration-75"
+                                             x-transition:leave-start="opacity-100 transform scale-100"
+                                             x-transition:leave-end="opacity-0 transform scale-95"
+                                             class="origin-top-right absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl bg-white border border-gray-100 overflow-hidden z-50 py-1"
+                                             style="display: none;">
+                                            
+                                            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                                                <span class="text-sm font-bold text-gray-900">Notifikasi</span>
+                                                @if($unreadNotificationsCount > 0)
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700">
+                                                        {{ $unreadNotificationsCount }} Baru
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <div class="max-h-64 overflow-y-auto divide-y divide-gray-50">
+                                                @forelse($recentNotifications as $notif)
+                                                    <a href="{{ route('admin.notifications.read', $notif->id) }}" class="block px-4 py-3 hover:bg-pink-50/50 transition duration-150 {{ !$notif->is_read ? 'bg-pink-50/20' : '' }}">
+                                                        <div class="flex items-start gap-3">
+                                                            <div class="flex-shrink-0 mt-0.5">
+                                                                @if($notif->type === 'warning')
+                                                                    <span class="text-amber-500 font-bold">⚠️</span>
+                                                                @elseif($notif->type === 'success')
+                                                                    <span class="text-emerald-500 font-bold">✅</span>
+                                                                @else
+                                                                    <span class="text-blue-500 font-bold">ℹ️</span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="flex-1 min-w-0">
+                                                                <p class="text-xs font-bold text-gray-950 truncate">{{ $notif->title }}</p>
+                                                                <p class="text-xs text-gray-600 line-clamp-2 mt-0.5 leading-normal">{{ $notif->message }}</p>
+                                                                <p class="text-[10px] text-gray-400 mt-1 font-medium">{{ $notif->created_at->diffForHumans() }}</p>
+                                                            </div>
+                                                            @if(!$notif->is_read)
+                                                                <div class="flex-shrink-0 w-2 h-2 rounded-full bg-pink-500 self-center"></div>
+                                                            @endif
+                                                        </div>
+                                                    </a>
+                                                @empty
+                                                    <div class="px-4 py-6 text-center text-gray-500 text-xs">
+                                                        <span class="text-2xl mb-1 block">🍓</span>
+                                                        Tidak ada notifikasi baru
+                                                    </div>
+                                                @endforelse
+                                            </div>
+
+                                            <div class="px-4 py-2 border-t border-gray-100 bg-gray-50 flex justify-between items-center text-center">
+                                                @if($unreadNotificationsCount > 0)
+                                                    <form action="{{ route('admin.notifications.markAllRead') }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="text-xs text-pink-600 hover:text-pink-700 font-semibold transition">Tandai semua dibaca</button>
+                                                    </form>
+                                                @endif
+                                                <a href="{{ route('admin.notifications.index') }}" class="text-xs text-gray-600 hover:text-pink-600 font-semibold transition ml-auto">Lihat semua</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <span class="text-sm text-white flex items-center">
                                     Selamat datang, <span class="font-medium ml-1">{{ Auth::user()->name }}</span>
                                     @if(Auth::user()->isAdmin())

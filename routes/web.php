@@ -125,6 +125,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders/{order}', [AdminPackageOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminPackageOrderController::class, 'updateStatus'])->name('orders.update-status');
 
+    // Notification Settings routes
+    Route::get('/notification-settings', [App\Http\Controllers\NotificationSettingController::class, 'index'])->name('notification-settings.index');
+    Route::put('/notification-settings/{notificationSetting}', [App\Http\Controllers\NotificationSettingController::class, 'update'])->name('notification-settings.update');
+    Route::post('/notification-settings/test', [App\Http\Controllers\NotificationSettingController::class, 'testSend'])->name('notification-settings.test');
+
+    // In-App Notification routes
+    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+
 
 });// Sales Data routes - hanya untuk admin
 Route::middleware(['auth','admin'])->group(function () {

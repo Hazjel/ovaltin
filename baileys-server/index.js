@@ -9,12 +9,10 @@ const fs = require('fs');
 const app = express();
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 let sock = null;
 let qrCodeText = null;
 let connectionStatus = 'disconnected';
-
-const ARTIFACTS_DIR = 'C:\\Users\\Lenovo\\.gemini\\antigravity\\brain\\81367dbc-facd-4290-b24a-56cc9a8b904e';
 
 async function connectToWhatsApp() {
     console.log('Inisialisasi koneksi ke WhatsApp...');
@@ -57,19 +55,7 @@ async function connectToWhatsApp() {
                     width: 300
                 }, (err) => {
                     if (err) console.error('Gagal membuat file PNG QR Code di server:', err);
-                    else {
-                        console.log(`QR Code disimpan di server: ${qrServerPath}`);
-                        
-                        if (fs.existsSync(ARTIFACTS_DIR)) {
-                            const qrArtifactPath = path.join(ARTIFACTS_DIR, 'qr.png');
-                            try {
-                                fs.copyFileSync(qrServerPath, qrArtifactPath);
-                                console.log(`QR Code disalin ke folder Chat: ${qrArtifactPath}`);
-                            } catch (copyErr) {
-                                console.error('Gagal menyalin file QR ke artifacts:', copyErr);
-                            }
-                        }
-                    }
+                    else console.log(`QR Code disimpan di server: ${qrServerPath}`);
                 });
             }
 
@@ -83,12 +69,7 @@ async function connectToWhatsApp() {
                 
                 const qrServerPath = path.join(__dirname, 'qr.png');
                 if (fs.existsSync(qrServerPath)) fs.unlinkSync(qrServerPath);
-                
-                const qrArtifactPath = path.join(ARTIFACTS_DIR, 'qr.png');
-                if (fs.existsSync(qrArtifactPath)) {
-                    try { fs.unlinkSync(qrArtifactPath); } catch(e) {}
-                }
-                
+
                 if (shouldReconnect) {
                     setTimeout(connectToWhatsApp, 5000);
                 } else {
@@ -105,11 +86,6 @@ async function connectToWhatsApp() {
                 
                 const qrServerPath = path.join(__dirname, 'qr.png');
                 if (fs.existsSync(qrServerPath)) fs.unlinkSync(qrServerPath);
-                
-                const qrArtifactPath = path.join(ARTIFACTS_DIR, 'qr.png');
-                if (fs.existsSync(qrArtifactPath)) {
-                    try { fs.unlinkSync(qrArtifactPath); } catch(e) {}
-                }
             }
         });
 

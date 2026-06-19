@@ -217,6 +217,7 @@
 <script>
     @if(!empty($chartData))
     @foreach($chartData as $product => $data)
+    @if($selectedProduct !== '__all__' && $selectedProduct !== $product) @continue @endif
     const ctx{{ str_replace(' ', '', ucfirst($product)) }} = document.getElementById('chart-{{ $product }}');
     const chart{{ str_replace(' ', '', ucfirst($product)) }} = new Chart(ctx{{ str_replace(' ', '', ucfirst($product)) }}, {
         type: 'line',

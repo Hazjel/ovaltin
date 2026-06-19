@@ -606,10 +606,11 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                 `;
 
+                const escHtml = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
                 for (const [product, stats] of Object.entries(data.products)) {
                     html += `
                         <tr>
-                            <td class="px-4 py-2 text-sm">${product}</td>
+                            <td class="px-4 py-2 text-sm">${escHtml(product)}</td>
                             <td class="px-4 py-2 text-sm">${stats.total.toLocaleString()}</td>
                             <td class="px-4 py-2 text-sm">${stats.count}</td>
                             <td class="px-4 py-2 text-sm">${stats.avg.toFixed(2)}</td>

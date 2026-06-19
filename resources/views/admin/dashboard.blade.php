@@ -378,21 +378,21 @@
                     </span>
                 </a>
                 
-                <a href="{{ route('admin.orders.index') }}" class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 rounded-lg border border-gray-200 hover:border-gray-300">
+                <a href="{{ route('admin.notification-settings.index') }}" class="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 rounded-lg border border-gray-200 hover:border-gray-300">
                     <div>
                         <span class="rounded-lg inline-flex p-3 bg-emerald-50 text-emerald-700 ring-4 ring-white">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
                         </span>
                     </div>
                     <div class="mt-8">
                         <h3 class="text-lg font-medium">
                             <span class="absolute inset-0" aria-hidden="true"></span>
-                            Order Paketan
+                            Setting Notifikasi
                         </h3>
                         <p class="mt-2 text-sm text-gray-500">
-                            Kelola order paketan dari pelanggan.
+                            Atur pengingat WhatsApp data penjualan.
                         </p>
                     </div>
                 </a>

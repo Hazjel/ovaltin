@@ -3,7 +3,77 @@
 @section('title', 'Data Penjualan')
 
 @section('content')
+
+{{-- =============================================
+     POPUP: Konfirmasi Penjualan Hari Ini
+     Muncul hanya di hari Selasa/Jumat jika belum dikonfirmasi hari ini
+     dan data penjualan minggu ini belum ada
+     ============================================= --}}
+@php
+    use App\Models\SalesConfirmation;
+    use Carbon\Carbon;
+
+    $today      = now();
+    $dayOfWeek  = (int) $today->dayOfWeek; // 2=Selasa, 5=Jumat
+    $isReminderDay = in_array($dayOfWeek, [2, 5]);
+    $alreadyConfirmedToday = SalesConfirmation::isTodayConfirmed();
+    $hasSalesThisWeek      = SalesConfirmation::hasSalesDataThisWeek();
+    $weekConfirmedNoSales  = SalesConfirmation::isWeekConfirmedNoSales();
+
+    $showPopup = $isReminderDay && !$alreadyConfirmedToday && !$hasSalesThisWeek && !$weekConfirmedNoSales;
+@endphp
+
+@if($showPopup)
+<div id="salesPopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-bounce-in">
+        <div class="text-5xl mb-4">🍓</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Dapur Ovaltin</h3>
+        <p class="text-gray-600 mb-1 text-sm">{{ $today->translatedFormat('l, d F Y') }}</p>
+        <p class="text-gray-800 font-semibold mt-4 mb-6">
+            Apakah ada penjualan hari ini?
+        </p>
+
+        <div class="flex flex-col gap-3">
+            {{-- Ada penjualan --}}
+            <form action="{{ route('sales-confirmation.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="has_sales" value="yes">
+                <button type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-green-500 hover:bg-green-600 transition shadow-md">
+                    ✅ Ya, Ada Penjualan
+                </button>
+            </form>
+
+            {{-- Tidak ada penjualan --}}
+            <form action="{{ route('sales-confirmation.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="has_sales" value="no">
+                <button type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition shadow-md"
+                    onclick="return confirm('Konfirmasi: Tidak ada penjualan minggu ini? Pengingat WA akan dihentikan.')">
+                    ❌ Tidak Ada Penjualan
+                </button>
+            </form>
+        </div>
+
+        <p class="text-xs text-gray-400 mt-4">Popup ini hanya muncul sekali per hari</p>
+    </div>
+</div>
+
+<style>
+    @keyframes bounceIn {
+        0%   { opacity: 0; transform: scale(0.8); }
+        60%  { opacity: 1; transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .animate-bounce-in {
+        animation: bounceIn 0.4s ease-out;
+    }
+</style>
+@endif
+
 <div class="space-y-6">
+
     <!-- Header -->
     <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">

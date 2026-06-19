@@ -22,3 +22,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+baileys-server/node_modules
+baileys-server/auth_info_baileys/

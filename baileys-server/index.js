@@ -107,6 +107,14 @@ app.get('/status', (req, res) => {
     });
 });
 
+app.get('/qr', (req, res) => {
+    const qrServerPath = path.join(__dirname, 'qr.png');
+    if (!fs.existsSync(qrServerPath)) {
+        return res.status(404).send('QR code tidak tersedia. Server mungkin sudah terhubung atau belum siap.');
+    }
+    res.sendFile(qrServerPath);
+});
+
 app.post('/send-message', async (req, res) => {
     const { phone, message } = req.body;
 

@@ -44,7 +44,7 @@ Route::get('/testimonials', [TestimonialController::class, 'index'])->name('test
 Route::get('/testimonials/create', [TestimonialController::class, 'create'])->name('testimonials.create')->middleware('auth');
 
 // Testimonial routes - store memerlukan login
-Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store')->middleware('auth');
+Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store')->middleware(['auth', 'throttle:10,1']);
 
 // Testimonial routes - show bisa diakses tanpa login (setelah create)
 Route::get('/testimonials/{testimonial}', [TestimonialController::class, 'show'])->name('testimonials.show');
@@ -66,7 +66,7 @@ Route::get('/faq', [FAQController::class, 'index'])->name('faqs.index');
 
 // Contact routes
 Route::get('/kontak', [App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
-Route::post('/kontak', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+Route::post('/kontak', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store')->middleware('throttle:10,1');
 
 // Education pages
 Route::get('/edukasi/perawatan-strawberry', function () {

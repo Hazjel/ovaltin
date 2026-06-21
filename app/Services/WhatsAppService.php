@@ -23,7 +23,9 @@ class WhatsAppService
         $errorMessage = null;
 
         try {
-            $response = Http::post($this->apiUrl, [
+            $response = Http::withHeaders([
+                'X-Api-Key' => config('services.whatsapp.api_key'),
+            ])->post($this->apiUrl, [
                 'phone'   => $phone,
                 'message' => $message,
             ]);

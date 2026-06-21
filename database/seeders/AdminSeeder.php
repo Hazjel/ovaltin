@@ -14,16 +14,21 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create single admin account
+        $email = env('ADMIN_SEED_EMAIL', 'admin@strawberry.com');
+        $password = env('ADMIN_SEED_PASSWORD');
+
+        if (! $password) {
+            $this->command->error('ADMIN_SEED_PASSWORD belum diset di .env. Seeder dibatalkan.');
+            return;
+        }
+
         User::create([
             'name' => 'Administrator',
-            'email' => 'admin@strawberry.com',
-            'password' => Hash::make('Strawberry2024!'),
+            'email' => $email,
+            'password' => Hash::make($password),
             'role' => 'admin',
         ]);
 
-        $this->command->info('Admin account created successfully!');
-        $this->command->info('Email: admin@strawberry.com');
-        $this->command->info('Password: Strawberry2024!');
+        $this->command->info("Admin account created successfully: {$email}");
     }
 }

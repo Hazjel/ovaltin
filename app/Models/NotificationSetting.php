@@ -28,7 +28,7 @@ class NotificationSetting extends Model
     public static function getSettings(): self
     {
         return self::firstOrCreate([], [
-            'recipient_phone'  => '6289652179403',
+            'recipient_phone'  => env('DEFAULT_NOTIFICATION_PHONE', ''),
             'morning_time'     => '10:00',
             'evening_time'     => '20:00',
             'target_days'      => ['2', '5'],

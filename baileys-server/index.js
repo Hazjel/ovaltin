@@ -253,6 +253,11 @@ app.get('/qr-page', (req, res) => {
 });
 
 app.post('/send-message', async (req, res) => {
+    const apiKey = process.env.API_KEY;
+    if (apiKey && req.headers['x-api-key'] !== apiKey) {
+        return res.status(403).json({ error: 'Akses ditolak.' });
+    }
+
     const { phone, message } = req.body;
 
     if (!phone || !message) {

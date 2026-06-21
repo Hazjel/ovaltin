@@ -258,7 +258,34 @@ html {
             </div>
         </div>
     </div>
-    
+
+    <!-- Video Section - Full Width -->
+    <div id="video-section-2" class="bg-white shadow-lg rounded-xl sm:rounded-2xl overflow-hidden">
+        <div class="bg-gradient-to-r from-pink-50 to-pink-50 px-4 sm:px-6 py-4 sm:py-5 border-b border-pink-100">
+            <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Perkenalan Dapur Ovaltin
+            </h2>
+        </div>
+
+        <div class="p-6 sm:p-8">
+            <div class="bg-gradient-to-br from-pink-100 to-pink-100 rounded-2xl overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] shadow-xl">
+                <iframe
+                    class="w-full h-full"
+                    src="https://www.youtube.com/embed/j6TJ9dsdkME"
+                    title="Perkenalan Dapur Ovaltin"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- Konten Edukasi - Zip-Zap Layout -->
     <div id="edukasi-section" class="bg-gradient-to-b from-white to-pink-50 shadow-lg rounded-xl sm:rounded-2xl overflow-hidden">
         <div class="bg-gradient-to-r from-pink-50 to-pink-50 px-4 sm:px-6 py-4 sm:py-5 border-b border-pink-100">

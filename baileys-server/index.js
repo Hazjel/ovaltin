@@ -8,10 +8,13 @@ const fs = require('fs');
 
 const app = express();
 app.use(express.json());
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    next();
+});
 
 const PORT = process.env.PORT || 3000;
 const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
-const PROCESS_STARTED_AT = new Date().toISOString();
 let sock = null;
 let qrCodeText = null;
 let connectionStatus = 'disconnected';
@@ -107,9 +110,7 @@ connectToWhatsApp();
 app.get('/status', (req, res) => {
     res.json({
         status: connectionStatus,
-        hasQr: !!qrCodeText,
-        processStartedAt: PROCESS_STARTED_AT,
-        pid: process.pid
+        hasQr: !!qrCodeText
     });
 });
 

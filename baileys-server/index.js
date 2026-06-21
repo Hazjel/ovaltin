@@ -103,8 +103,7 @@ connectToWhatsApp();
 app.get('/status', (req, res) => {
     res.json({
         status: connectionStatus,
-        hasQr: !!qrCodeText,
-        hasSecret: !!process.env.QR_SECRET
+        hasQr: !!qrCodeText
     });
 });
 

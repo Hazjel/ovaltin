@@ -114,17 +114,84 @@ app.get('/status', (req, res) => {
     });
 });
 
-app.get('/qr', (req, res) => {
+function checkQrToken(req, res) {
     const secret = process.env.QR_SECRET;
     if (secret && req.query.token !== secret) {
-        return res.status(403).send('Akses ditolak.');
+        res.status(403).send('Akses ditolak.');
+        return false;
     }
+    return true;
+}
+
+app.get('/qr', (req, res) => {
+    if (!checkQrToken(req, res)) return;
 
     const qrServerPath = path.join(__dirname, 'qr.png');
     if (!fs.existsSync(qrServerPath)) {
         return res.status(404).send('QR code tidak tersedia. Server mungkin sudah terhubung atau belum siap.');
     }
     res.sendFile(qrServerPath);
+});
+
+app.get('/qr-page', (req, res) => {
+    if (!checkQrToken(req, res)) return;
+
+    const token = req.query.token || '';
+    res.send(`<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Scan QR WhatsApp - Dapur Ovaltin</title>
+<style>
+    body { font-family: sans-serif; text-align: center; background: #fdf2f8; padding: 40px 16px; }
+    h1 { color: #be185d; font-size: 1.25rem; }
+    #status { margin: 12px 0; font-weight: bold; }
+    #qrBox { display: inline-block; background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    img { width: 280px; height: 280px; }
+    #empty { color: #6b7280; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+    <h1>🍓 Scan QR WhatsApp - Dapur Ovaltin</h1>
+    <p id="status">Memuat status...</p>
+    <div id="qrBox">
+        <img id="qrImg" src="" alt="QR Code" style="display:none;">
+        <p id="empty">Menunggu QR code...</p>
+    </div>
+    <script>
+        const token = ${JSON.stringify(token)};
+        async function refresh() {
+            try {
+                const res = await fetch('/status?t=' + Date.now());
+                const data = await res.json();
+                document.getElementById('status').textContent = 'Status: ' + data.status;
+
+                if (data.status === 'connected') {
+                    document.getElementById('qrImg').style.display = 'none';
+                    document.getElementById('empty').textContent = '✅ WhatsApp sudah terhubung!';
+                    document.getElementById('empty').style.display = 'block';
+                    return;
+                }
+
+                if (data.hasQr) {
+                    const img = document.getElementById('qrImg');
+                    img.src = '/qr?token=' + encodeURIComponent(token) + '&t=' + Date.now();
+                    img.style.display = 'inline-block';
+                    document.getElementById('empty').style.display = 'none';
+                } else {
+                    document.getElementById('qrImg').style.display = 'none';
+                    document.getElementById('empty').textContent = 'Menunggu QR code...';
+                    document.getElementById('empty').style.display = 'block';
+                }
+            } catch (e) {
+                document.getElementById('status').textContent = 'Gagal memuat status.';
+            }
+        }
+        refresh();
+        setInterval(refresh, 3000);
+    </script>
+</body>
+</html>`);
 });
 
 app.post('/send-message', async (req, res) => {

@@ -108,6 +108,11 @@ app.get('/status', (req, res) => {
 });
 
 app.get('/qr', (req, res) => {
+    const secret = process.env.QR_SECRET;
+    if (secret && req.query.token !== secret) {
+        return res.status(403).send('Akses ditolak.');
+    }
+
     const qrServerPath = path.join(__dirname, 'qr.png');
     if (!fs.existsSync(qrServerPath)) {
         return res.status(404).send('QR code tidak tersedia. Server mungkin sudah terhubung atau belum siap.');

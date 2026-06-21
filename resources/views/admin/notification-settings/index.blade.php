@@ -85,6 +85,16 @@
                 </p>
             </div>
         </div>
+        @if(config('services.whatsapp.qr_secret'))
+            <div class="mt-4 pt-4 border-t border-gray-100">
+                <a href="{{ rtrim(config('services.whatsapp.url'), '/') }}/qr?token={{ config('services.whatsapp.qr_secret') }}"
+                   target="_blank"
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    🔗 Reconnect WhatsApp (Scan QR)
+                </a>
+                <p class="text-xs text-gray-400 mt-1">Gunakan jika status WhatsApp terputus dan perlu scan ulang.</p>
+            </div>
+        @endif
     </div>
 
     {{-- Form Pengaturan --}}

@@ -46,7 +46,7 @@
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-gray-50 rounded-lg p-4 text-center">
-                <p class="text-sm text-gray-500 mb-1">Status</p>
+                <p class="text-sm text-gray-500 mb-1">Reminder Otomatis</p>
                 @if($settings->is_active)
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                         ✅ Aktif

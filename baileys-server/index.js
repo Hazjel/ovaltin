@@ -10,6 +10,7 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
 let sock = null;
 let qrCodeText = null;
 let connectionStatus = 'disconnected';
@@ -22,7 +23,7 @@ async function connectToWhatsApp() {
         const { version, isLatest } = await fetchLatestBaileysVersion();
         console.log(`Menggunakan versi WhatsApp Web: ${version.join('.')}, isLatest: ${isLatest}`);
 
-        const { state, saveCreds } = await useMultiFileAuthState(path.join(__dirname, 'auth_info_baileys'));
+        const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
         
         sock = makeWASocket({
             version,
@@ -73,7 +74,9 @@ async function connectToWhatsApp() {
                 if (shouldReconnect) {
                     setTimeout(connectToWhatsApp, 5000);
                 } else {
-                    console.log('Perangkat di-logout. Silakan jalankan ulang server untuk scan QR code baru.');
+                    console.log('Perangkat di-logout. Menghapus sesi lama dan membuat QR code baru...');
+                    fs.rmSync(AUTH_DIR, { recursive: true, force: true });
+                    setTimeout(connectToWhatsApp, 2000);
                 }
             } else if (connection === 'open') {
                 console.clear();

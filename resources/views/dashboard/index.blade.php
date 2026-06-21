@@ -272,7 +272,7 @@ html {
         </div>
 
         <div class="p-6 sm:p-8">
-            <div class="bg-gradient-to-br from-pink-100 to-pink-100 rounded-2xl overflow-hidden h-[500px] sm:h-[650px] md:h-[750px] lg:h-[800px] shadow-xl">
+            <div class="bg-gradient-to-br from-pink-100 to-pink-100 rounded-2xl overflow-hidden h-[600px] sm:h-[750px] md:h-[850px] lg:h-[900px] max-w-md mx-auto shadow-xl">
                 <iframe
                     class="w-full h-full"
                     src="https://www.youtube.com/embed/j6TJ9dsdkME"

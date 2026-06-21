@@ -49,6 +49,6 @@ class NotificationSettingController extends Controller
             return back()->with('success', '✅ Pesan test berhasil dikirim ke ' . $settings->recipient_phone . '!');
         }
 
-        return back()->with('error', '❌ Gagal mengirim pesan test. Pastikan token Fonnte sudah benar di .env');
+        return back()->with('error', '❌ Gagal mengirim pesan test. Pastikan WhatsApp server (Baileys) sudah terhubung.');
     }
 }

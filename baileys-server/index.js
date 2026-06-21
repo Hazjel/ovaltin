@@ -143,48 +143,106 @@ app.get('/qr-page', (req, res) => {
 <meta charset="utf-8">
 <title>Scan QR WhatsApp - Dapur Ovaltin</title>
 <style>
-    body { font-family: sans-serif; text-align: center; background: #fdf2f8; padding: 40px 16px; }
-    h1 { color: #be185d; font-size: 1.25rem; }
-    #status { margin: 12px 0; font-weight: bold; }
-    #qrBox { display: inline-block; background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    img { width: 280px; height: 280px; }
-    #empty { color: #6b7280; font-size: 0.9rem; }
+    * { box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        text-align: center;
+        background: #f8fafc;
+        padding: 48px 16px;
+        margin: 0;
+        color: #0f172a;
+    }
+    .card {
+        max-width: 360px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        padding: 32px 24px;
+    }
+    h1 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 4px;
+    }
+    .subtitle {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin: 0 0 20px;
+    }
+    .badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 999px;
+        margin-bottom: 20px;
+    }
+    .badge.connecting { background: #fef3c7; color: #92400e; }
+    .badge.connected { background: #dcfce7; color: #166534; }
+    .badge.disconnected { background: #fee2e2; color: #991b1b; }
+    #qrBox {
+        width: 240px;
+        height: 240px;
+        margin: 0 auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    img { width: 100%; height: 100%; border-radius: 8px; }
+    #empty { color: #64748b; font-size: 0.8rem; padding: 0 16px; }
 </style>
 </head>
 <body>
-    <h1>🍓 Scan QR WhatsApp - Dapur Ovaltin</h1>
-    <p id="status">Memuat status...</p>
-    <div id="qrBox">
-        <img id="qrImg" src="" alt="QR Code" style="display:none;">
-        <p id="empty">Menunggu QR code...</p>
+    <div class="card">
+        <h1>Hubungkan WhatsApp</h1>
+        <p class="subtitle">Dapur Ovaltin — Gateway Notifikasi</p>
+        <span id="statusBadge" class="badge connecting">Memuat status...</span>
+        <div id="qrBox">
+            <img id="qrImg" src="" alt="QR Code" style="display:none;">
+            <p id="empty">Menunggu QR code...</p>
+        </div>
     </div>
     <script>
         const token = ${JSON.stringify(token)};
+        const badge = document.getElementById('statusBadge');
+        const img = document.getElementById('qrImg');
+        const empty = document.getElementById('empty');
+
+        function setBadge(text, cls) {
+            badge.textContent = text;
+            badge.className = 'badge ' + cls;
+        }
+
         async function refresh() {
             try {
                 const res = await fetch('/status?t=' + Date.now());
                 const data = await res.json();
-                document.getElementById('status').textContent = 'Status: ' + data.status;
 
                 if (data.status === 'connected') {
-                    document.getElementById('qrImg').style.display = 'none';
-                    document.getElementById('empty').textContent = '✅ WhatsApp sudah terhubung!';
-                    document.getElementById('empty').style.display = 'block';
+                    setBadge('Terhubung', 'connected');
+                    img.style.display = 'none';
+                    empty.textContent = 'WhatsApp sudah terhubung.';
+                    empty.style.display = 'block';
                     return;
                 }
 
+                setBadge(data.status === 'connecting' ? 'Menyambungkan' : 'Terputus', data.status === 'connecting' ? 'connecting' : 'disconnected');
+
                 if (data.hasQr) {
-                    const img = document.getElementById('qrImg');
                     img.src = '/qr?token=' + encodeURIComponent(token) + '&t=' + Date.now();
                     img.style.display = 'inline-block';
-                    document.getElementById('empty').style.display = 'none';
+                    empty.style.display = 'none';
                 } else {
-                    document.getElementById('qrImg').style.display = 'none';
-                    document.getElementById('empty').textContent = 'Menunggu QR code...';
-                    document.getElementById('empty').style.display = 'block';
+                    img.style.display = 'none';
+                    empty.textContent = 'Menunggu QR code...';
+                    empty.style.display = 'block';
                 }
             } catch (e) {
-                document.getElementById('status').textContent = 'Gagal memuat status.';
+                setBadge('Gagal memuat', 'disconnected');
             }
         }
         refresh();

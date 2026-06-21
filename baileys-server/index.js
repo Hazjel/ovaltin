@@ -11,6 +11,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 const AUTH_DIR = path.join(__dirname, 'auth_info_baileys');
+const PROCESS_STARTED_AT = new Date().toISOString();
 let sock = null;
 let qrCodeText = null;
 let connectionStatus = 'disconnected';
@@ -106,7 +107,9 @@ connectToWhatsApp();
 app.get('/status', (req, res) => {
     res.json({
         status: connectionStatus,
-        hasQr: !!qrCodeText
+        hasQr: !!qrCodeText,
+        processStartedAt: PROCESS_STARTED_AT,
+        pid: process.pid
     });
 });
 

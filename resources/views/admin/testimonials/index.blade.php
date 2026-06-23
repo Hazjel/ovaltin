@@ -20,7 +20,61 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             @if($testimonials->count() > 0)
-                <div class="overflow-hidden">
+                <!-- Mobile Card Layout -->
+                <div class="md:hidden space-y-3">
+                    @foreach($testimonials as $testimonial)
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 bg-gradient-to-r from-sky-400 to-indigo-400 rounded-full flex items-center justify-center text-white font-bold">
+                                        {{ strtoupper(substr($testimonial->name, 0, 1)) }}
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-900">{{ $testimonial->name }}</div>
+                                    <div class="text-sm text-gray-500 truncate">{{ $testimonial->email }}</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center mt-2">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <svg class="w-4 h-4 {{ $i <= $testimonial->rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                @endfor
+                                <span class="ml-1 text-sm text-gray-600">{{ $testimonial->rating }}/5</span>
+                                <span class="ml-auto text-xs text-gray-500">{{ $testimonial->formatted_date }}</span>
+                            </div>
+
+                            <p class="text-sm text-gray-900 mt-2">{{ Str::limit($testimonial->message, 100) }}</p>
+
+                            @if($testimonial->reply)
+                                <div class="text-sm text-gray-700 bg-green-50 p-2 rounded mt-2">
+                                    <p>{{ Str::limit($testimonial->reply, 100) }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">Dibalas {{ $testimonial->replied_at ? $testimonial->replied_at->format('d M Y') : '' }}</p>
+                                </div>
+                            @else
+                                <span class="text-xs text-gray-400">Belum ada balasan</span>
+                            @endif
+
+                            <div class="grid grid-cols-2 gap-2 mt-3">
+                                <button onclick="openReplyModal({{ $testimonial->id }}, '{{ addslashes($testimonial->name) }}', '{{ addslashes($testimonial->reply ?? '') }}')" class="inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100">
+                                    Balas
+                                </button>
+                                <form action="{{ route('admin.testimonials.destroy', $testimonial) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus testimoni ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-pink-50 text-pink-700 border border-pink-100 hover:bg-pink-100">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Table Layout -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -119,7 +173,7 @@
 
 <!-- Reply Modal -->
 <div id="replyModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="relative top-20 mx-4 sm:mx-auto p-5 border w-full max-w-sm shadow-lg rounded-md bg-white">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Balas Testimoni</h3>
             <button type="button" onclick="closeReplyModal()" class="text-gray-400 hover:text-gray-600">

@@ -180,7 +180,7 @@
                                     </label>
                                     <p class="pl-1">atau drag & drop</p>
                                 </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, JPEG, WEBP hingga 10MB</p>
+                                <p class="text-xs text-gray-500">PNG, JPG, JPEG, WEBP hingga 8MB</p>
                             </div>
                         </div>
                         <!-- Image Preview -->

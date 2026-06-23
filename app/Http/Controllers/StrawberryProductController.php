@@ -37,7 +37,7 @@ class StrawberryProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
             'category' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:8192', // 8MB max (server limit)
             'origin' => 'required|string|max:255',
             'harvest_date' => 'required|date',
             'is_organic' => 'boolean',
@@ -92,7 +92,7 @@ class StrawberryProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
             'category' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:8192', // 8MB max (server limit)
             'origin' => 'required|string|max:255',
             'harvest_date' => 'required|date',
             'is_organic' => 'boolean',

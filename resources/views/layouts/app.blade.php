@@ -112,6 +112,9 @@
                                     <a href="{{ route('contact.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('contact.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
                                         Kontak Kami
                                     </a>
+                                    <a href="{{ route('faqs.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('faqs.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
+                                        FAQ
+                                    </a>
                                 @endif
                             @else
                                 <a href="{{ route('dashboard') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
@@ -123,6 +126,9 @@
                                 </a>
                                 <a href="{{ route('contact.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('contact.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
                                     Kontak Kami
+                                </a>
+                                <a href="{{ route('faqs.index') }}" class="inline-flex items-center px-2 py-1 text-sm font-medium {{ request()->routeIs('faqs.*') ? 'text-white border-b-2 border-white' : 'text-white/90 hover:text-white' }} transition">
+                                    FAQ
                                 </a>
                             @endauth
                         </div>
@@ -325,6 +331,13 @@
                                 </svg>
                                 <span>Kontak Kami</span>
                             </a>
+                            <a href="{{ route('faqs.index') }}" @click="mobileOpen=false"
+                               class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('faqs.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>FAQ</span>
+                            </a>
                         @endif
                     </div>
 
@@ -372,6 +385,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                             </svg>
                             <span>Kontak Kami</span>
+                        </a>
+                        <a href="{{ route('faqs.index') }}" @click="mobileOpen=false"
+                           class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium {{ request()->routeIs('faqs.*') ? 'bg-white text-pink-600 shadow' : 'text-white hover:bg-white/15' }} transition">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>FAQ</span>
                         </a>
                     </div>
 

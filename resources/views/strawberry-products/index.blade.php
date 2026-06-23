@@ -28,7 +28,7 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             @if($products->count() > 0)
-                <div class="overflow-hidden">
+                <div class="overflow-x-auto">
                     <table class="min-w-full table-fixed divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>

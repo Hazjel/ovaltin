@@ -28,7 +28,69 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             @if($users->count() > 0)
-                <div class="overflow-hidden">
+                <!-- Mobile Card Layout -->
+                <div class="md:hidden space-y-3">
+                    @foreach($users as $user)
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-600">{{ substr($user->name, 0, 1) }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $user->name }}
+                                        @if($user->id === auth()->id())
+                                            <span class="text-gray-500">(Anda)</span>
+                                        @endif
+                                    </div>
+                                    <div class="text-sm text-gray-500 truncate">{{ $user->email }}</div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 mt-3 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Role:</span>
+                                    <form action="{{ route('admin.users.update-role', $user) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <select name="role" onchange="this.form.submit()"
+                                            class="text-sm border-0 focus:ring-0 p-0 {{ $user->isAdmin() ? 'text-purple-600 font-medium' : 'text-gray-600' }}"
+                                            {{ $user->id === auth()->id() ? 'disabled' : '' }}>
+                                            <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
+                                            <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
+                                        </select>
+                                    </form>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Dibuat:</span>
+                                    <span class="text-gray-900">{{ $user->created_at->format('d M Y') }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                @if($user->id !== auth()->id())
+                                    <form action="{{ route('admin.users.delete', $user) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold bg-pink-50 text-pink-700 border border-pink-100 hover:bg-pink-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                            Hapus User
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="text-gray-400 text-xs">Tidak dapat dihapus</span>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Table Layout -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>

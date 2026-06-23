@@ -291,7 +291,43 @@
         <div class="bg-white shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Ranking Produk Paling Laku</h3>
-            <div class="overflow-x-auto">
+            @php
+                $totalAllMobile = $topProducts->sum('total_terjual');
+            @endphp
+            <!-- Mobile Card Layout -->
+            <div class="md:hidden space-y-3">
+                @foreach($topProducts as $product)
+                    @php
+                        $percentageMobile = $totalAllMobile > 0 ? ($product['total_terjual'] / $totalAllMobile) * 100 : 0;
+                    @endphp
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center gap-3">
+                            @if($product['rank'] == 1)
+                                <span class="text-2xl">🥇</span>
+                            @elseif($product['rank'] == 2)
+                                <span class="text-2xl">🥈</span>
+                            @elseif($product['rank'] == 3)
+                                <span class="text-2xl">🥉</span>
+                            @else
+                                <span class="text-lg font-semibold text-gray-600">#{{ $product['rank'] }}</span>
+                            @endif
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-medium text-gray-900">{{ $product['nama_produk'] }}</div>
+                                <div class="text-sm text-gray-500">{{ number_format($product['total_terjual']) }} terjual</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $percentageMobile }}%"></div>
+                            </div>
+                            <span class="text-sm text-gray-600">{{ number_format($percentageMobile, 1) }}%</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Desktop Table Layout -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -396,7 +432,38 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Data Penjualan</h3>
-            <div class="overflow-x-auto">
+            <!-- Mobile Card Layout -->
+            <div class="md:hidden space-y-3">
+                @forelse($salesHistory as $sale)
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ $sale->product->name ?? $sale->nama_produk }}</div>
+                                <div class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($sale->tanggal_penjualan)->format('d/m/Y') }}</div>
+                            </div>
+                            <div class="text-sm font-medium text-gray-900">{{ number_format($sale->jumlah_terjual, 0) }} terjual</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-3">
+                            <button onclick="editSalesData({{ $sale->id }})"
+                                    class="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100">
+                                Edit
+                            </button>
+                            <form action="{{ route('sales-data.destroy', $sale->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-100 hover:bg-red-100">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-4 text-sm text-gray-500">Belum ada data penjualan.</div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table Layout -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -458,7 +525,7 @@
 
 <!-- Modal Edit Data Penjualan -->
 <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="relative top-20 mx-4 sm:mx-auto p-5 border w-full max-w-sm shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Edit Data Penjualan</h3>

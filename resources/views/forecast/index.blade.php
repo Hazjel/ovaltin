@@ -162,7 +162,45 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Tabel Prediksi Penjualan</h3>
-            <div class="overflow-x-auto">
+            @php
+                $firstSuccessNameMobile = collect($forecastResults)->search(fn($r) => $r['success'] ?? false);
+            @endphp
+            <!-- Mobile Card Layout -->
+            <div class="md:hidden space-y-3">
+                @for($i = 0; $i < $forecastDays; $i++)
+                    @php
+                        $rowTotalMobile = 0;
+                    @endphp
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="text-sm font-medium text-gray-900">
+                            @if($firstSuccessNameMobile && isset($forecastResults[$firstSuccessNameMobile]['forecast'][$i]))
+                                {{ \Carbon\Carbon::parse($forecastResults[$firstSuccessNameMobile]['forecast'][$i]['date'])->format('d/m/Y') }}
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 mt-2 text-sm">
+                            @foreach($products as $product)
+                                @if(isset($forecastResults[$product->name]) && $forecastResults[$product->name]['success'] && isset($forecastResults[$product->name]['forecast'][$i]))
+                                    @php
+                                        $quantityMobile = $forecastResults[$product->name]['forecast'][$i]['quantity'];
+                                        $rowTotalMobile += $quantityMobile;
+                                    @endphp
+                                    <span class="text-gray-500">{{ $product->name }}:</span>
+                                    <span class="text-gray-900">{{ number_format($quantityMobile, 0) }}</span>
+                                @else
+                                    <span class="text-gray-500">{{ $product->name }}:</span>
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            @endforeach
+                        </div>
+                        <div class="text-sm font-semibold text-gray-900 mt-2 pt-2 border-t border-gray-100">
+                            Total: {{ number_format($rowTotalMobile, 0) }}
+                        </div>
+                    </div>
+                @endfor
+            </div>
+
+            <!-- Desktop Table Layout -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>

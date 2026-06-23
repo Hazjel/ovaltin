@@ -28,7 +28,94 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             @if($products->count() > 0)
-                <div class="overflow-x-auto">
+                <!-- Mobile Card Layout -->
+                <div class="md:hidden space-y-3">
+                    @foreach($products as $product)
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-shrink-0 h-12 w-12">
+                                    @if($product->image)
+                                        <img class="h-12 w-12 rounded-lg object-cover" src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                                    @else
+                                        <div class="h-12 w-12 rounded-lg bg-sky-100 flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
+                                    <div class="text-sm text-gray-500 truncate">{{ Str::limit($product->description, 50) }}</div>
+                                    @if($product->is_organic)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 mt-1">Olahan</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 mt-1">Non-Olahan</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 mt-3 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Kategori:</span>
+                                    <span class="text-gray-900">{{ $product->category }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Harga:</span>
+                                    <span class="text-gray-900">{{ $product->formatted_price }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Stok:</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $product->stock_status_color }}">
+                                        {{ $product->stock_quantity }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Asal:</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-100">
+                                        {{ $product->origin }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <form action="{{ route('strawberry-products.update-status', $product) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <select name="status" onchange="this.form.submit()"
+                                        class="w-full text-xs border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 h-9">
+                                        <option value="active" {{ $product->status === 'active' ? 'selected' : '' }}>Tersedia</option>
+                                        <option value="inactive" {{ $product->status === 'inactive' || $product->status === 'out_of_stock' ? 'selected' : '' }}>Tidak Tersedia</option>
+                                    </select>
+                                </form>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 mt-3">
+                                <a href="{{ route('strawberry-products.show', $product) }}" class="inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-100">
+                                    Detail
+                                </a>
+                                <a href="{{ route('strawberry-products.edit', $product) }}" class="inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100 hover:bg-amber-100">
+                                    Edit
+                                </a>
+                                <button type="button"
+                                    @click="stockModal=true; stockUrl='{{ route('strawberry-products.add-stock', $product) }}'; stockName={{ json_encode($product->name) }}; stockCurrent={{ $product->stock_quantity }}"
+                                    class="inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100">
+                                    Stok+
+                                </button>
+                                <form action="{{ route('strawberry-products.destroy', $product) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-100 hover:bg-rose-100">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Table Layout -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full table-fixed divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>

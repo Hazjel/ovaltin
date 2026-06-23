@@ -34,7 +34,40 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             @if($faqs->count() > 0)
-                <div class="overflow-hidden">
+                <!-- Mobile Card Layout -->
+                <div class="md:hidden space-y-3">
+                    @foreach($faqs as $faq)
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs text-gray-500">#{{ $loop->iteration }}</span>
+                                @if($faq->is_active)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Aktif</span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Tidak Aktif</span>
+                                @endif
+                            </div>
+                            <div class="text-sm font-medium text-gray-900 mt-2">{{ Str::limit($faq->question, 80) }}</div>
+                            <div class="text-sm text-gray-500 mt-1">{{ Str::limit($faq->answer, 100) }}</div>
+                            <div class="text-sm text-gray-500 mt-2">Urutan: {{ $faq->order }}</div>
+
+                            <div class="grid grid-cols-2 gap-2 mt-3">
+                                <a href="{{ route('admin.faqs.edit', $faq) }}" class="inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-pink-50 text-pink-700 border border-pink-100 hover:bg-pink-100">
+                                    Edit
+                                </a>
+                                <form action="{{ route('admin.faqs.destroy', $faq) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus FAQ ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 rounded-md text-xs font-semibold bg-pink-50 text-pink-700 border border-pink-100 hover:bg-pink-100">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Table Layout -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>

@@ -272,30 +272,32 @@ document.addEventListener('DOMContentLoaded', function() {
             previewImage(this);
         });
     }
-});
 
-// Drag and drop functionality
-const dropZone = document.querySelector('.border-dashed');
-const fileInput = document.getElementById('image');
+    // Drag and drop functionality
+    const dropZone = document.querySelector('.border-dashed');
+    const fileInput = document.getElementById('image');
 
-dropZone.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    dropZone.classList.add('border-pink-400', 'bg-pink-50');
-});
+    if (dropZone && fileInput) {
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.classList.add('border-pink-400', 'bg-pink-50');
+        });
 
-dropZone.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    dropZone.classList.remove('border-pink-400', 'bg-pink-50');
-});
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('border-pink-400', 'bg-pink-50');
+        });
 
-dropZone.addEventListener('drop', function(e) {
-    e.preventDefault();
-    dropZone.classList.remove('border-pink-400', 'bg-pink-50');
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        fileInput.files = files;
-        previewImage(fileInput);
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('border-pink-400', 'bg-pink-50');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                previewImage(fileInput);
+            }
+        });
     }
 });
 </script>

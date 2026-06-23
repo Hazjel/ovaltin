@@ -136,4 +136,7 @@ Route::middleware(['auth','admin'])->group(function () {
     // Forecast routes
     Route::get('/forecast', [App\Http\Controllers\ForecastController::class, 'index'])->name('forecast.index');
     Route::get('/forecast/prediction', [App\Http\Controllers\ForecastController::class, 'getPrediction'])->name('forecast.prediction');
+
+    // Sales confirmation routes
+    Route::post('/sales-confirmation', [App\Http\Controllers\SalesConfirmationController::class, 'store'])->name('sales-confirmation.store');
 });

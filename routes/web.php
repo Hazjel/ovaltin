@@ -100,16 +100,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/contact/{contactInfo}', [App\Http\Controllers\AdminContactController::class, 'update'])->name('contact.update');
     Route::delete('/contact/{contactInfo}', [App\Http\Controllers\AdminContactController::class, 'destroy'])->name('contact.destroy');
     Route::patch('/contact/{contactInfo}/set-active', [App\Http\Controllers\AdminContactController::class, 'setActive'])->name('contact.set-active');
-    
-    // Admin product introduction routes
-    Route::get('/product-introduction', [App\Http\Controllers\AdminProductIntroductionController::class, 'index'])->name('product-introduction.index');
-    Route::get('/product-introduction/create', [App\Http\Controllers\AdminProductIntroductionController::class, 'create'])->name('product-introduction.create');
-    Route::post('/product-introduction', [App\Http\Controllers\AdminProductIntroductionController::class, 'store'])->name('product-introduction.store');
-    Route::get('/product-introduction/{id}/edit', [App\Http\Controllers\AdminProductIntroductionController::class, 'edit'])->name('product-introduction.edit');
-    Route::put('/product-introduction/{id}', [App\Http\Controllers\AdminProductIntroductionController::class, 'update'])->name('product-introduction.update');
-    Route::delete('/product-introduction/{id}', [App\Http\Controllers\AdminProductIntroductionController::class, 'destroy'])->name('product-introduction.destroy');
-    Route::post('/product-introduction/{id}/set-active', [App\Http\Controllers\AdminProductIntroductionController::class, 'setActive'])->name('product-introduction.set-active');
-    
+
     // Admin FAQ routes
     Route::resource('faqs', AdminFAQController::class);
 

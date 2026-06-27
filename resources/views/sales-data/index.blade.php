@@ -549,7 +549,6 @@
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                         <option value="">Pilih Produk</option>
                         @foreach($products as $product)
-                            <option value="{{ $product }}">{{ $product }}</option>
                             <option value="{{ $product->id }}">{{ $product->name }}</option>
                         @endforeach
                     </select>
